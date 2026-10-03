@@ -2493,7 +2493,7 @@ uv run python scripts/run_pipeline.py
 uv run python scripts/run_pipeline.py --quick --out .smoke/results
 ```
 
-The full run takes about 15 minutes; the `--quick` run is a smoke test with tiny settings.
+The full run takes about 5 minutes; the `--quick` run is a smoke test with tiny settings.
 
 ## Data
 
