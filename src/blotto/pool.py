@@ -1,6 +1,8 @@
 """Simulated applicant pool: loading allocations, building groups, and weighted fields."""
 
 import csv
+import io
+import math
 from collections.abc import Collection, Mapping
 from dataclasses import dataclass
 from pathlib import Path
@@ -16,6 +18,8 @@ RIDDLER_FILES = {
     4: "castle-solutions-4.csv",
 }
 
+KNOWN_CHATBOTS = ("chatgpt", "claude", "gemini")
+CHATBOT_COLUMNS = ["model", *(f"b{i}" for i in range(1, N_FIELDS + 1))]
 JITTER_SHARE = 0.3
 VALUES = np.arange(1, N_FIELDS + 1)
 
@@ -37,7 +41,7 @@ class Field:
 
 
 def _valid(a: list[float]) -> bool:
-    return len(a) == N_FIELDS and all(v >= 0 and v == int(v) for v in a) and sum(a) == BUDGET
+    return len(a) == N_FIELDS and all(math.isfinite(v) and v >= 0 and v == int(v) for v in a) and sum(a) == BUDGET
 
 
 def read_allocations(path: Path) -> np.ndarray:
@@ -63,21 +67,60 @@ def read_riddler(riddler_dir: Path, exclude_rounds: Collection[int] = ()) -> np.
     )
 
 
+def _parse_chatbot_answers(path: Path) -> tuple[dict[str, list[list[int]]], int]:
+    """Valid rows keyed by lower-case model name, plus the number of rows skipped as invalid."""
+    with open(path, newline="", encoding="utf-8-sig", errors="replace") as fh:
+        text = fh.read()
+    try:
+        dialect = csv.Sniffer().sniff(text.splitlines()[0] if text.strip() else ",", delimiters=",;\t")
+    except csv.Error:
+        dialect = csv.excel
+    reader = csv.reader(io.StringIO(text), dialect)
+    header = [name.strip().lower() for name in next(reader, [])]
+    missing = [name for name in CHATBOT_COLUMNS if name not in header]
+    if missing:
+        raise ValueError(f"{path} is missing required columns: {', '.join(missing)} (found: {', '.join(header)})")
+    index = {name: header.index(name) for name in CHATBOT_COLUMNS}
+    by_model: dict[str, list[list[int]]] = {}
+    skipped = 0
+    for row in reader:
+        if not any(cell.strip() for cell in row):
+            continue  # blank line
+        try:
+            model = row[index["model"]].strip().lower()
+            a = [float(row[index[f"b{i}"]]) for i in range(1, N_FIELDS + 1)]
+        except (IndexError, ValueError):
+            skipped += 1
+            continue
+        if model and _valid(a):
+            by_model.setdefault(model, []).append([int(v) for v in a])
+        else:
+            skipped += 1
+    return by_model, skipped
+
+
 def read_chatbot_answers(path: Path) -> dict[str, np.ndarray]:
-    """Valid allocations from answers.csv keyed by lower-case model name; invalid rows are skipped."""
+    """Valid allocations from answers.csv keyed by lower-case model name; invalid rows are skipped.
+
+    Tolerates a byte-order mark, stray spaces, capitalized headers, and comma, semicolon, or tab delimiters.
+    Raises ValueError when a required column (model, b1 to b10) is missing, since then no row could be read.
+    """
     if not path.exists():
         return {}
-    by_model: dict[str, list[list[int]]] = {}
-    with open(path, newline="", encoding="utf-8") as fh:
-        for row in csv.DictReader(fh):
-            model = (row.get("model") or "").strip().lower()
-            try:
-                a = [float(row[f"b{i}"]) for i in range(1, N_FIELDS + 1)]
-            except (KeyError, TypeError, ValueError):
-                continue
-            if model and _valid(a):
-                by_model.setdefault(model, []).append([int(v) for v in a])
+    by_model, _ = _parse_chatbot_answers(path)
     return {model: np.array(rows, dtype=np.int64) for model, rows in by_model.items()}
+
+
+def chatbot_answer_report(path: Path) -> dict:
+    """Rows kept per model, rows skipped as invalid, and model names outside KNOWN_CHATBOTS."""
+    if not path.exists():
+        return {"kept": {}, "skipped_rows": 0, "unknown_models": []}
+    by_model, skipped = _parse_chatbot_answers(path)
+    return {
+        "kept": {model: len(rows) for model, rows in sorted(by_model.items())},
+        "skipped_rows": skipped,
+        "unknown_models": sorted(model for model in by_model if model not in KNOWN_CHATBOTS),
+    }
 
 
 def round_to_budget(raw: np.ndarray, budget: int = BUDGET) -> np.ndarray:
