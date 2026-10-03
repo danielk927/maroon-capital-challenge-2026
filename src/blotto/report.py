@@ -61,6 +61,55 @@ def _save(fig: plt.Figure, path: Path) -> None:
     plt.close(fig)
 
 
+LABEL_SPOTS = [  # offset in points from the labeled mark, then horizontal and vertical alignment
+    (-10, -14, "right", "top"),
+    (10, -14, "left", "top"),
+    (-10, 14, "right", "bottom"),
+    (10, 14, "left", "bottom"),
+    (-12, 0, "right", "center"),
+    (12, 0, "left", "center"),
+    (0, -16, "center", "top"),
+    (0, 16, "center", "bottom"),
+]
+
+
+def _place_label(
+    ax: plt.Axes, text: str, xy: tuple[float, float], obstacles: np.ndarray, margin_pt: float = 3.0
+) -> None:
+    """Label xy at the spot that stays inside the axes, avoids the legend, and covers the fewest obstacles.
+
+    An obstacle counts as covered when its center is within margin_pt (a marker radius) of the label's background.
+    """
+    renderer = ax.figure.canvas.get_renderer()
+    shown = ax.transData.transform(obstacles)
+    frame = ax.get_window_extent(renderer)
+    legend = ax.get_legend()
+    legend_box = legend.get_window_extent(renderer) if legend else None
+    margin = margin_pt * ax.figure.dpi / 72
+    best = None
+    for dx, dy, ha, va in LABEL_SPOTS:
+        label = ax.annotate(
+            text, xy, xytext=(dx, dy), textcoords="offset points", ha=ha, va=va, color=INK, fontsize=8.5,
+            bbox=dict(boxstyle="round,pad=0.2", fc=SURFACE, ec="none"),
+        )
+        label.draw(renderer)  # positions the rounded background so its extent is current
+        box = label.get_bbox_patch().get_window_extent(renderer)
+        covered = int(
+            (
+                (shown[:, 0] >= box.x0 - margin) & (shown[:, 0] <= box.x1 + margin)
+                & (shown[:, 1] >= box.y0 - margin) & (shown[:, 1] <= box.y1 + margin)
+            ).sum()
+        )
+        outside = not (frame.x0 <= box.x0 and box.x1 <= frame.x1 and frame.y0 <= box.y0 and box.y1 <= frame.y1)
+        score = (outside, bool(legend_box and box.overlaps(legend_box)), covered)
+        if best is None or score < best[0]:
+            if best is not None:
+                best[1].remove()
+            best = (score, label)
+        else:
+            label.remove()
+
+
 def price_list(field: Field, index: int, troops: np.ndarray) -> np.ndarray:
     """Weighted share of the field beaten on battlefield index + 1 at each troop count."""
     column = field.entries[:, index]
@@ -76,7 +125,7 @@ def pareto_mask(win: np.ndarray, pts: np.ndarray) -> np.ndarray:
     return keep
 
 
-def plot_pool(groups: Mapping[str, Group], names: Sequence[str], mix: Mapping[str, float], path: Path) -> None:
+def plot_pool(groups: Mapping[str, Group], names: Sequence[str], mix: Mapping[str, float], path: Path) -> plt.Figure:
     """Center-mix share of each group, with the range the pessimist may choose."""
     lo, hi = bounds_arrays(names)
     y = np.arange(len(names))[::-1]
@@ -92,9 +141,10 @@ def plot_pool(groups: Mapping[str, Group], names: Sequence[str], mix: Mapping[st
         ax.set_xlabel("Share of the field (bar: center mix, line: range the pessimist may choose)")
         ax.set_title("Simulated applicant pool (entries per group, including jittered copies)")
         _save(fig, path)
+    return fig
 
 
-def plot_price_lists(field: Field, pick: np.ndarray, path: Path) -> None:
+def plot_price_lists(field: Field, pick: np.ndarray, path: Path) -> plt.Figure:
     """Share of the field beaten at each troop count, one small panel per battlefield."""
     max_troops = max(40, int(np.max(pick)) + 5)
     troops = np.arange(max_troops + 1)
@@ -108,13 +158,14 @@ def plot_price_lists(field: Field, pick: np.ndarray, path: Path) -> None:
             ax.text(0.97, 0.05, label, transform=ax.transAxes, ha="right", va="bottom", fontsize=7.5, color=INK_2)
             ax.set_title(f"Battlefield {i + 1}", fontsize=9)
             ax.yaxis.set_major_formatter(PERCENT)
-            ax.set_ylim(0, 1.02)
+            ax.set_ylim(-0.04, 1.02)  # room below 0% so a dot at 0 troops is not cut by the axis
         fig.supxlabel("Troops placed on the battlefield", fontsize=9, color=INK_2)
         fig.supylabel("Share of field beaten", fontsize=9, color=INK_2)
         _save(fig, path)
+    return fig
 
 
-def plot_candidates(win: np.ndarray, pts: np.ndarray, pick_index: int, path: Path) -> None:
+def plot_candidates(win: np.ndarray, pts: np.ndarray, pick_index: int, path: Path) -> plt.Figure:
     """Every candidate's win rate and average points, with the Pareto frontier and the pick."""
     front = pareto_mask(win, pts)
     order = np.argsort(win[front])
@@ -123,20 +174,23 @@ def plot_candidates(win: np.ndarray, pts: np.ndarray, pick_index: int, path: Pat
         ax.scatter(win, pts, s=14, color=AXIS, label="candidate", zorder=2)
         ax.plot(win[front][order], pts[front][order], color=BLUE, linewidth=2, marker="o", markersize=5, label="Pareto frontier", zorder=3)
         ax.scatter([win[pick_index]], [pts[pick_index]], s=90, color=ORANGE, edgecolors=SURFACE, linewidths=2, label="final pick", zorder=4)
-        ax.annotate(
-            "final pick", (win[pick_index], pts[pick_index]), xytext=(-10, -14), textcoords="offset points",
-            ha="right", va="top", color=INK, fontsize=8.5, bbox=dict(boxstyle="round,pad=0.2", fc=SURFACE, ec="none"),
-        )
         ax.xaxis.set_major_locator(MaxNLocator(nbins=5, steps=[1, 2, 5, 10]))
         ax.xaxis.set_major_formatter(PERCENT)
         ax.set_xlabel("Win rate against the center-mix field")
         ax.set_ylabel("Average points per match")
         ax.set_title("Candidates: win rate versus points")
         ax.legend(loc="best")
+        fig.tight_layout()
+        line = np.column_stack([win[front][order], pts[front][order]])
+        steps = np.linspace(0, 1, 20)[:, None]
+        on_line = [a + steps * (b - a) for a, b in zip(line[:-1], line[1:])]
+        others = np.column_stack([np.delete(win, pick_index), np.delete(pts, pick_index)])
+        _place_label(ax, "final pick", (win[pick_index], pts[pick_index]), np.vstack([others, *on_line]))
         _save(fig, path)
+    return fig
 
 
-def plot_finalists(finalists: np.ndarray, ratings: np.ndarray, names: Sequence[str], path: Path) -> None:
+def plot_finalists(finalists: np.ndarray, ratings: np.ndarray, names: Sequence[str], path: Path) -> plt.Figure:
     """Heatmap of each finalist's rating against each group."""
     with plt.rc_context(STYLE):
         fig, ax = plt.subplots(figsize=(6.4, 0.5 * len(finalists) + 1.6))
@@ -157,9 +211,10 @@ def plot_finalists(finalists: np.ndarray, ratings: np.ndarray, names: Sequence[s
         bar.ax.tick_params(color=AXIS, labelcolor=INK_2, labelsize=7.5)
         ax.set_title("Finalists: rating against each group (lambda = 0.5)")
         _save(fig, path)
+    return fig
 
 
-def plot_tournaments(above_wins: np.ndarray, above_points: np.ndarray, path: Path) -> None:
+def plot_tournaments(above_wins: np.ndarray, above_points: np.ndarray, path: Path) -> plt.Figure:
     """Distribution of the pick's rank across mock tournaments, by wins and by points."""
     bins = np.linspace(0, 1, 41)
     with plt.rc_context(STYLE):
@@ -175,9 +230,10 @@ def plot_tournaments(above_wins: np.ndarray, above_points: np.ndarray, path: Pat
             ax.set_xlabel("Share of the field ranked above the pick")
         axes[0].set_ylabel("Mock tournaments")
         _save(fig, path)
+    return fig
 
 
-def plot_allocation(pick: np.ndarray, beaten: np.ndarray, path: Path) -> None:
+def plot_allocation(pick: np.ndarray, beaten: np.ndarray, path: Path) -> plt.Figure:
     """The final allocation and the share of the field it beats on each battlefield."""
     x = np.arange(1, len(pick) + 1)
     with plt.rc_context(STYLE):
@@ -197,3 +253,4 @@ def plot_allocation(pick: np.ndarray, beaten: np.ndarray, path: Path) -> None:
         bottom.set_xticks(x)
         bottom.grid(axis="x", visible=False)
         _save(fig, path)
+    return fig
