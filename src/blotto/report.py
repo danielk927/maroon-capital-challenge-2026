@@ -1,5 +1,6 @@
 """Static figures for the writeup: light surface, validated palette, one axis per chart."""
 
+import itertools
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 
@@ -90,7 +91,7 @@ def _place_label(
     for dx, dy, ha, va in LABEL_SPOTS:
         label = ax.annotate(
             text, xy, xytext=(dx, dy), textcoords="offset points", ha=ha, va=va, color=INK, fontsize=8.5,
-            bbox=dict(boxstyle="round,pad=0.2", fc=SURFACE, ec="none"),
+            bbox={"boxstyle": "round,pad=0.2", "fc": SURFACE, "ec": "none"},
         )
         label.draw(renderer)  # positions the rounded background so its extent is current
         box = label.get_bbox_patch().get_window_extent(renderer)
@@ -183,7 +184,7 @@ def plot_candidates(win: np.ndarray, pts: np.ndarray, pick_index: int, path: Pat
         fig.tight_layout()
         line = np.column_stack([win[front][order], pts[front][order]])
         steps = np.linspace(0, 1, 20)[:, None]
-        on_line = [a + steps * (b - a) for a, b in zip(line[:-1], line[1:])]
+        on_line = [a + steps * (b - a) for a, b in itertools.pairwise(line)]
         others = np.column_stack([np.delete(win, pick_index), np.delete(pts, pick_index)])
         _place_label(ax, "final pick", (win[pick_index], pts[pick_index]), np.vstack([others, *on_line]))
         _save(fig, path)

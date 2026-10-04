@@ -56,7 +56,7 @@ class Config:
     heldout_chatbot_model: str = "gemini"
 
     @classmethod
-    def quick(cls) -> "Config":
+    def quick(cls) -> Config:
         """Tiny settings for tests and smoke runs."""
         return cls(
             chains=4, steps=100, sample_size=300, counter_rounds=1, counters_per_round=2,

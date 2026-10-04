@@ -12,6 +12,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "pytest>=8.4",
+    "ruff>=0.16.10",
 ]
 
 [build-system]
@@ -23,3 +24,6 @@ packages = ["src/blotto"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120

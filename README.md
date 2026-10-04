@@ -34,6 +34,7 @@ The numbers for every finalist are in [`results/summary.json`](results/summary.j
 ```bash
 uv sync
 uv run pytest
+uv run ruff check
 uv run python scripts/run_pipeline.py
 uv run python scripts/run_pipeline.py --quick --out .smoke/results
 ```
