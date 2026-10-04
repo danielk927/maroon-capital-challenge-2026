@@ -41,8 +41,9 @@ Interpretations, stated in the writeup:
   For example, {2,6,8,9} beats the remaining six battlefields 51.59 to 50.4.
 - Battlefields 5 and 10 never change whether the base score is a multiple of 5.
 - Battlefield 6 is worth its 6 points plus 10% of everything else.
-- In 4,510 real submissions to FiveThirtyEight's version of this game, 27-40% of per-battlefield allocations are multiples of 5.
-  One troop above a round number therefore often flips many ties into wins.
+- In 4,510 real submissions to FiveThirtyEight's version of this game, 15% of per-battlefield allocations are 0, so a single troop wins many abandoned battlefields.
+  Among nonzero allocations, multiples of 5 make up 21%, about what chance gives (20%), but there are local spikes worth beating by one troop.
+  For example, 6.6% of entries put exactly 20 on battlefield 6, against 3.0% at 19.
 
 ## 4. Approach overview
 
@@ -96,8 +97,8 @@ Heuristics are generated, not hand-typed:
 Chatbot answers:
 
 - Columns: `model`, `prompt_variant`, `sample`, `b1` to `b10`.
-- Claude answers come from fresh subagents that see only the problem text.
-- ChatGPT and Gemini answers are collected by pasting the problem text into each chatbot, since no API keys are configured.
+- All answers, Claude's included, are collected by hand through each chatbot's own web interface with its default model.
+  No API keys are configured, and hand collection matches what applicants actually see.
 - The target is at least 15 answers per model.
   Prompts are the problem text verbatim plus one short variant that ends with "What allocation should I submit?".
 
