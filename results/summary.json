@@ -132,7 +132,8 @@
         "avg_points": 50.12480810234541,
         "rating": 0.5357502418754599
       }
-    }
+    },
+    "chatbots_skipped": "no answers from model 'gemini'"
   },
   "counter_check": {
     "counter": [
@@ -150,6 +151,11 @@
     "pool_share_within_10": 0.0,
     "pick_win_rate_vs_counter_family": 0.0,
     "pick_avg_points_vs_counter_family": 11.741176470588234
+  },
+  "chatbot_answers": {
+    "kept": {},
+    "skipped_rows": 0,
+    "unknown_models": []
   },
   "counters": [
     [
