@@ -210,22 +210,29 @@ def plot_finalists(finalists: np.ndarray, ratings: np.ndarray, names: Sequence[s
         bar.outline.set_visible(False)
         bar.ax.tick_params(color=AXIS, labelcolor=INK_2, labelsize=7.5)
         ax.set_title("Finalists: rating against each group (lambda = 0.5)")
+        fig.tight_layout()
+        renderer = fig.canvas.get_renderer()
+        labels_left = min(t.get_window_extent(renderer).x0 for t in ax.get_yticklabels())
+        # Line the title up with the row labels instead of the heatmap's left edge.
+        ax.set_title(ax.get_title(loc="left"), x=ax.transAxes.inverted().transform((labels_left, 0))[0])
         _save(fig, path)
     return fig
 
 
 def plot_tournaments(above_wins: np.ndarray, above_points: np.ndarray, path: Path) -> plt.Figure:
     """Distribution of the pick's rank across mock tournaments, by wins and by points."""
-    bins = np.linspace(0, 1, 41)
+    bins = np.linspace(0, 1, 101)
+    # Zoom to the data, but always show at least 0-50% so the cutoff has context on both sides.
+    upper = min(1.0, max(0.5, np.ceil(max(np.max(above_wins), np.max(above_points)) * 10 + 1) / 10))
     with plt.rc_context(STYLE):
-        fig, axes = plt.subplots(1, 2, figsize=(9, 3.2), sharey=True)
+        fig, axes = plt.subplots(1, 2, figsize=(9, 3.2))
         for ax, data, label in zip(axes, [above_wins, above_points], ["wins", "points"]):
             ax.hist(data, bins=bins, color=BLUE, rwidth=0.85)
             ax.axvline(0.25, color=INK_2, linestyle="--", linewidth=1)
             ax.text(0.26, 0.95, "top-quartile cutoff", transform=ax.get_xaxis_transform(), fontsize=7.5, color=INK_2, va="top")
             ax.set_title(f"Rank by {label}: top quartile in {(data < 0.25).mean():.0%} of tournaments")
             ax.xaxis.set_major_formatter(PERCENT)
-            ax.set_xlim(0, 1)
+            ax.set_xlim(0, upper)
             ax.grid(axis="x", visible=False)
             ax.set_xlabel("Share of the field ranked above the pick")
         axes[0].set_ylabel("Mock tournaments")

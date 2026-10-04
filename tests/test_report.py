@@ -1,5 +1,6 @@
 import numpy as np
 from matplotlib.backends.backend_agg import FigureCanvasAgg
+from matplotlib.text import Text
 
 from blotto.pool import Field, Group, field_from, random_splits
 from blotto.report import (
@@ -104,3 +105,24 @@ def test_pick_label_finds_the_clear_side_when_every_corner_is_blocked(tmp_path):
         & (shown[:, 1] >= box.y0 - radius) & (shown[:, 1] <= box.y1 + radius)
     )
     assert not touches.any()
+
+
+def test_tournament_panels_scale_independently_and_zoom_to_the_data(tmp_path):
+    rng = np.random.default_rng(0)
+    fig = plot_tournaments(rng.random(200) * 0.3, np.zeros(200), tmp_path / "t.png")
+    left, right = fig.axes
+    assert not left.get_shared_y_axes().joined(left, right)
+    assert left.get_xlim()[1] <= 0.5 and right.get_xlim() == left.get_xlim()
+
+
+def test_finalists_title_lines_up_with_the_row_labels(tmp_path):
+    finalists = np.array([[1, 4, 7, 9, 13, 23, 26, 4, 6, 7], [0, 0, 0, 0, 15, 28, 1, 1, 33, 22]])
+    ratings = np.array([[0.60, 0.50], [0.55, 0.62]])
+    fig = plot_finalists(finalists, ratings, ["riddler", "heuristics"], tmp_path / "f.png")
+    FigureCanvasAgg(fig)
+    fig.canvas.draw()
+    renderer = fig.canvas.get_renderer()
+    ax = fig.axes[0]
+    title = next(t for t in ax.get_children() if isinstance(t, Text) and t.get_text().startswith("Finalists"))
+    labels_left = min(t.get_window_extent(renderer).x0 for t in ax.get_yticklabels())
+    assert abs(title.get_window_extent(renderer).x0 - labels_left) <= 2
