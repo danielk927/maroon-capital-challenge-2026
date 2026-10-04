@@ -14,6 +14,7 @@ from blotto.pool import (
     Field,
     Group,
     build_pool,
+    chatbot_answer_report,
     field_from,
     make_group,
     read_allocations,
@@ -134,6 +135,10 @@ def run(config: Config, data_dir: Path, out_dir: Path) -> dict:
         heldout["chatbots"] = heldout_report(
             diag.pick, _uniform(np.vstack(other_answers)), {held_model: _uniform(answers[held_model])}
         )
+    elif held_model:
+        heldout["chatbots_skipped"] = f"no answers from models other than '{held_model}' to compare with"
+    else:
+        heldout["chatbots_skipped"] = f"no answers from model '{config.heldout_chatbot_model}'"
 
     n_final = len(sel.finalists)
     win_center, pts_center = metrics(sel.ranked.candidates, center)
@@ -157,6 +162,7 @@ def run(config: Config, data_dir: Path, out_dir: Path) -> dict:
         ],
         "heldout": {"pick": diag.pick.tolist(), "same_as_final_pick": bool((diag.pick == sel.pick).all()), **heldout},
         "counter_check": counter_check(sel.pick, center, rng, config.chains, config.steps),
+        "chatbot_answers": chatbot_answer_report(data_dir / "chatbots" / "answers.csv"),
         "counters": sel.counters.tolist(),
         "group_sizes": {g: len(sel.groups[g].entries) for g in sel.names},
         "bounds": {g: list(BOUNDS[g]) for g in sel.names},

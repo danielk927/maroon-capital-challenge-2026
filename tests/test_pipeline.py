@@ -25,7 +25,19 @@ def test_quick_pipeline_end_to_end_with_claude_answers_only(tmp_path):
     assert json.loads((out / "summary.json").read_text())["pick"] == summary["pick"]
     assert set(summary["heldout"]["riddler"]) == {"seen", "round_4"}
     assert "chatbots" not in summary["heldout"]  # no gemini answers to hold out
+    assert "gemini" in summary["heldout"]["chatbots_skipped"]
+    assert summary["chatbot_answers"] == {"kept": {"claude": 2}, "skipped_rows": 0, "unknown_models": []}
     assert 1 <= len(summary["finalists"]) <= 3
     assert summary["finalists"][0]["worst_case_rating"] >= summary["finalists"][-1]["worst_case_rating"]
     for name in FIGURES:
         assert (out / f"{name}.png").stat().st_size > 10_000
+
+
+def test_quick_pipeline_without_any_chatbot_answers(tmp_path):
+    data = tmp_path / "data"
+    shutil.copytree(DATA / "riddler", data / "riddler")
+    summary = run(Config.quick(), data, tmp_path / "results")
+    assert sum(summary["pick"]) == 100
+    assert summary["chatbot_answers"] == {"kept": {}, "skipped_rows": 0, "unknown_models": []}
+    assert "chatbots" not in summary["group_sizes"]
+    assert "gemini" in summary["heldout"]["chatbots_skipped"]
