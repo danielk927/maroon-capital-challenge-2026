@@ -7,9 +7,11 @@ from blotto.robust import (
     LAM_RANGE,
     bounds_arrays,
     center_mix,
+    generate_candidates,
     group_metrics,
     group_names,
     rank_candidates,
+    robust_search,
     vertex_mixes,
     worst_case_rating,
     worst_case_value,
@@ -80,3 +82,32 @@ def test_rank_candidates_sorts_by_worst_case():
 def test_bounds_with_a_minimum_above_its_maximum_raise():
     with pytest.raises(ValueError, match="riddler"):
         bounds_arrays(ALL, {**BOUNDS, "riddler": (0.60, 0.50)})
+
+
+def _small_groups(rng, names):
+    return {g: Group(random_splits(30, rng), np.full(30, 1 / 30)) for g in names}
+
+
+def test_generate_candidates_returns_distinct_valid_allocations():
+    rng = np.random.default_rng(0)
+    names = ["riddler", "heuristics", "random", "counters"]
+    X = generate_candidates(_small_groups(rng, names), names, rng, chains=3, steps=50, sample_size=60)
+    assert X.ndim == 2 and X.shape[1] == 10 and len(X) >= 1
+    assert (X.sum(axis=1) == 100).all() and (X >= 0).all()
+    assert len(np.unique(X, axis=0)) == len(X)
+
+
+def test_robust_search_never_ends_below_its_best_start():
+    rng = np.random.default_rng(1)
+    names = ["riddler", "heuristics", "random", "counters"]
+    groups = _small_groups(rng, names)
+    starts = random_splits(4, rng)
+    X = robust_search(groups, names, starts, rng, steps=100, per_group_sample=30)  # samples cover each whole group
+    lo, hi = bounds_arrays(names)
+
+    def worst(Z):
+        win, pts = group_metrics(Z, groups, names)
+        return worst_case_rating(win, pts, lo, hi)
+
+    assert (X.sum(axis=1) == 100).all() and (X >= 0).all()
+    assert worst(X[:1])[0] >= worst(starts).max() - 1e-12
