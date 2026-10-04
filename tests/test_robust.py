@@ -75,3 +75,8 @@ def test_rank_candidates_sorts_by_worst_case():
     assert np.allclose(ranked.worst, worst_case_rating(ranked.win, ranked.pts, lo, hi))
     win, pts = group_metrics(ranked.candidates, groups, names)
     assert np.allclose(win, ranked.win) and np.allclose(pts, ranked.pts)
+
+
+def test_bounds_with_a_minimum_above_its_maximum_raise():
+    with pytest.raises(ValueError, match="riddler"):
+        bounds_arrays(ALL, {**BOUNDS, "riddler": (0.60, 0.50)})

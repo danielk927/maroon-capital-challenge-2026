@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 
 from blotto.pool import Field, Group, random_splits
 from blotto.robust import bounds_arrays
@@ -64,3 +65,14 @@ def test_counter_check_finds_a_counter_that_beats_the_pick():
     assert mine[0, 0] > theirs[0, 0]
     assert 0 <= result["pool_share_within_10"] <= 1
     assert 0 <= result["pick_win_rate_vs_counter_family"] <= 1
+
+
+def test_sample_mix_returns_the_only_mix_when_maximums_total_exactly_one():
+    bounds = {"riddler": (0.2, 0.6), "heuristics": (0.1, 0.4)}
+    assert np.allclose(sample_mix(["riddler", "heuristics"], np.random.default_rng(0), bounds), [0.6, 0.4])
+
+
+def test_sample_mix_gives_up_with_a_clear_error_when_the_room_is_too_thin():
+    bounds = {"riddler": (0.0, 0.5), "heuristics": (0.0, 0.5), "chatbots": (0.0, 1e-7)}
+    with pytest.raises(ValueError, match="widen"):
+        sample_mix(["riddler", "heuristics", "chatbots"], np.random.default_rng(0), bounds, max_tries=1000)

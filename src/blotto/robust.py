@@ -26,10 +26,15 @@ def group_names(groups: Mapping[str, Group]) -> list[str]:
     return [g for g in BOUNDS if g in groups]
 
 
-def bounds_arrays(names: Sequence[str]) -> tuple[np.ndarray, np.ndarray]:
-    """Min and max weight per group; raises ValueError when no mix within the bounds sums to 1."""
-    lo = np.array([BOUNDS[g][0] for g in names])
-    hi = np.array([BOUNDS[g][1] for g in names])
+def bounds_arrays(
+    names: Sequence[str], bounds: Mapping[str, tuple[float, float]] = BOUNDS
+) -> tuple[np.ndarray, np.ndarray]:
+    """Min and max weight per group; raises ValueError for a minimum above its maximum or when no mix sums to 1."""
+    lo = np.array([bounds[g][0] for g in names])
+    hi = np.array([bounds[g][1] for g in names])
+    inverted = [g for g, low, high in zip(names, lo, hi) if low > high]
+    if inverted:
+        raise ValueError(f"weight bounds have a minimum above the maximum for {inverted}")
     if lo.sum() > 1 + 1e-9 or hi.sum() < 1 - 1e-9:
         raise ValueError(
             f"weight bounds for {list(names)} cannot sum to 1 (minimums total {lo.sum():.2f}, maximums total {hi.sum():.2f})"

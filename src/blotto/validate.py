@@ -5,20 +5,30 @@ from collections.abc import Mapping, Sequence
 import numpy as np
 
 from blotto.pool import Field, Group, jitter, random_splits
-from blotto.robust import bounds_arrays
+from blotto.robust import BOUNDS, bounds_arrays
 from blotto.scoring import play
 from blotto.search import metrics, rating, search
 
 TOP_QUARTILE = 0.25
 
 
-def sample_mix(names: Sequence[str], rng: np.random.Generator) -> np.ndarray:
-    """A field mix drawn uniformly from {lo <= w <= hi, sum(w) = 1}."""
-    lo, hi = bounds_arrays(names)
-    while True:
+def sample_mix(
+    names: Sequence[str],
+    rng: np.random.Generator,
+    bounds: Mapping[str, tuple[float, float]] = BOUNDS,
+    max_tries: int = 100_000,
+) -> np.ndarray:
+    """A field mix drawn uniformly from {lo <= w <= hi, sum(w) = 1}, by rejection sampling."""
+    lo, hi = bounds_arrays(names, bounds)
+    if lo.sum() >= 1 - 1e-9:
+        return lo  # the minimums already total 1, so they are the only feasible mix
+    if hi.sum() <= 1 + 1e-9:
+        return hi  # the maximums total exactly 1, so they are the only feasible mix
+    for _ in range(max_tries):
         w = lo + (1 - lo.sum()) * rng.dirichlet(np.ones(len(names)))
         if (w <= hi + 1e-12).all():
             return w
+    raise ValueError(f"weight bounds for {list(names)} leave too little room to sample mixes; widen them")
 
 
 def _draw_field(
