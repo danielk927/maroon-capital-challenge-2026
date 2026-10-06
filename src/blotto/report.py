@@ -207,7 +207,7 @@ def plot_finalists(finalists: np.ndarray, ratings: np.ndarray, names: Sequence[s
             for c in range(ratings.shape[1]):
                 color = SURFACE if ratings[r, c] > middle else INK
                 ax.text(c, r, f"{ratings[r, c]:.3f}", ha="center", va="center", fontsize=8, color=color)
-        bar = fig.colorbar(image, ax=ax, fraction=0.04, pad=0.02)
+        bar = fig.colorbar(image, ax=ax, fraction=0.04, pad=0.02, aspect=40)  # tall enough for any row count
         bar.outline.set_visible(False)
         bar.ax.tick_params(color=AXIS, labelcolor=INK_2, labelsize=7.5)
         ax.set_title("Finalists: rating against each group (lambda = 0.5)")

@@ -126,3 +126,10 @@ def test_finalists_title_lines_up_with_the_row_labels(tmp_path):
     title = next(t for t in ax.get_children() if isinstance(t, Text) and t.get_text().startswith("Finalists"))
     labels_left = min(t.get_window_extent(renderer).x0 for t in ax.get_yticklabels())
     assert abs(title.get_window_extent(renderer).x0 - labels_left) <= 2
+
+
+def test_finalists_colorbar_spans_the_whole_heatmap(tmp_path):
+    rng = np.random.default_rng(0)
+    fig = plot_finalists(random_splits(7, rng), rng.random((7, 4)), ["riddler", "heuristics", "random", "counters"], tmp_path / "f.png")
+    heatmap, colorbar = fig.axes
+    assert colorbar.get_position().height >= 0.95 * heatmap.get_position().height
