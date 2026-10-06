@@ -22,8 +22,8 @@ ALL = ["riddler", "heuristics", "chatbots", "random", "counters"]
 
 def test_bounds_and_center_mix():
     lo, hi = bounds_arrays(ALL)
-    assert lo.tolist() == [0.20, 0.10, 0.15, 0.00, 0.05]
-    assert hi.tolist() == [0.50, 0.30, 0.50, 0.10, 0.25]
+    assert lo.tolist() == [0.05, 0.05, 0.50, 0.00, 0.05]
+    assert hi.tolist() == [0.40, 0.30, 0.80, 0.05, 0.30]
     mix = center_mix(ALL)
     assert np.isclose(sum(mix.values()), 1)
     assert all(BOUNDS[g][0] <= w <= BOUNDS[g][1] for g, w in mix.items())
@@ -36,7 +36,7 @@ def test_infeasible_bounds_raise():
 
 def test_vertex_mixes_are_feasible_extreme_points():
     V = vertex_mixes(ALL)
-    assert len(V) == 21
+    assert len(V) == 18
     lo, hi = bounds_arrays(ALL)
     for mix in V:
         w = np.array([mix[g] for g in ALL])
@@ -111,3 +111,8 @@ def test_robust_search_never_ends_below_its_best_start():
 
     assert (X.sum(axis=1) == 100).all() and (X >= 0).all()
     assert worst(X[:1])[0] >= worst(starts).max() - 1e-12
+
+
+def test_chatbot_answers_are_at_least_half_of_every_allowed_field():
+    assert all(mix["chatbots"] >= 0.5 - 1e-9 for mix in vertex_mixes(ALL))
+    assert center_mix(ALL)["chatbots"] >= 0.5

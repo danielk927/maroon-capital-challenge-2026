@@ -162,11 +162,15 @@ Initial weight bounds, which are judgment calls stated in the writeup:
 
 | Group | Min | Max |
 |---|---|---|
-| `riddler` | 20% | 50% |
-| `heuristics` | 10% | 30% |
-| `chatbots` | 15% | 50% |
-| `random` | 0% | 10% |
-| `counters` | 5% | 25% |
+| `riddler` | 5% | 40% |
+| `heuristics` | 5% | 30% |
+| `chatbots` | 50% | 80% |
+| `random` | 0% | 5% |
+| `counters` | 5% | 30% |
+
+Revised on 2026-10-05: chatbot answers get at least half of every field, because most applicants are expected to ask an LLM.
+The other maximums still total at least 100%, so a pool without chatbot answers stays feasible.
+The held-out run hides ChatGPT's answers, testing whether a pick tuned to Claude's answers carries over.
 
 ### 5.6 Validation (`blotto/validate.py`)
 

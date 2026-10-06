@@ -53,7 +53,7 @@ class Config:
     max_finalists: int = 10
     tournaments: int = 1000
     heldout_riddler_round: int = 4
-    heldout_chatbot_model: str = "gemini"
+    heldout_chatbot_model: str = "chatgpt"
 
     @classmethod
     def quick(cls) -> Config:

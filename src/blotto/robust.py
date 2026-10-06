@@ -10,12 +10,14 @@ from blotto.pool import Field, Group, random_splits, sample_field
 from blotto.scoring import MAX_SCORE
 from blotto.search import metrics, rating, search
 
+# Chatbot answers get at least half of every field: most applicants are expected to ask an LLM.
+# The other maximums still total at least 1, so a pool without chatbot answers stays feasible.
 BOUNDS: dict[str, tuple[float, float]] = {
-    "riddler": (0.20, 0.50),
-    "heuristics": (0.10, 0.30),
-    "chatbots": (0.15, 0.50),
-    "random": (0.00, 0.10),
-    "counters": (0.05, 0.25),
+    "riddler": (0.05, 0.40),
+    "heuristics": (0.05, 0.30),
+    "chatbots": (0.50, 0.80),
+    "random": (0.00, 0.05),
+    "counters": (0.05, 0.30),
 }
 LAM_RANGE = (0.25, 0.75)
 LAMS = (0.25, 0.5, 0.75)
