@@ -85,6 +85,11 @@ def select_pick(
 ) -> Selection:
     """Build the pool, run the counter loop, generate and rank candidates, and choose the pick."""
     groups = build_pool(data_dir, rng, exclude_riddler_rounds, exclude_chatbot_models)
+    if "chatbots" not in groups and BOUNDS["chatbots"][0] > 0:
+        raise ValueError(
+            f"no usable chatbot answers in {data_dir / 'chatbots' / 'answers.csv'}, but the weight bounds "
+            f"require chatbot answers to be at least {BOUNDS['chatbots'][0]:.0%} of the field"
+        )
     counters = counter_loop(
         groups, center_mix(group_names(groups) + ["counters"]), rng,
         rounds=config.counter_rounds, per_round=config.counters_per_round, min_l1=config.counter_min_l1,
@@ -120,7 +125,8 @@ def run(config: Config, data_dir: Path, out_dir: Path) -> dict:
 
     # Held-out diagnostic: rerun without one Riddler round and one chatbot model, then compare like with like.
     answers = read_chatbot_answers(data_dir / "chatbots" / "answers.csv")
-    held_model = config.heldout_chatbot_model if config.heldout_chatbot_model in answers else None
+    # Hold a model out only if another model's answers remain to fill the chatbot share of the field.
+    held_model = config.heldout_chatbot_model if config.heldout_chatbot_model in answers and len(answers) > 1 else None
     held_round = config.heldout_riddler_round
     diag = select_pick(config, data_dir, rng, {held_round}, {held_model} if held_model else set())
     heldout = {
@@ -135,8 +141,8 @@ def run(config: Config, data_dir: Path, out_dir: Path) -> dict:
         heldout["chatbots"] = heldout_report(
             diag.pick, _uniform(np.vstack(other_answers)), {held_model: _uniform(answers[held_model])}
         )
-    elif held_model:
-        heldout["chatbots_skipped"] = f"no answers from models other than '{held_model}' to compare with"
+    elif config.heldout_chatbot_model in answers:
+        heldout["chatbots_skipped"] = f"no answers from models other than '{config.heldout_chatbot_model}' to compare with"
     else:
         heldout["chatbots_skipped"] = f"no answers from model '{config.heldout_chatbot_model}'"
 

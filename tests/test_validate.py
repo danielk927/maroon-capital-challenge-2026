@@ -6,7 +6,7 @@ from blotto.robust import bounds_arrays
 from blotto.scoring import play
 from blotto.validate import counter_check, heldout_report, mock_tournaments, sample_mix
 
-NAMES = ["riddler", "heuristics", "random", "counters"]
+NAMES = ["riddler", "heuristics", "chatbots", "random", "counters"]
 WEAK = np.array([[100] + [0] * 9])
 STRONG = np.array([[0, 0, 0, 0, 0, 20, 20, 20, 20, 20]])
 

@@ -22,8 +22,8 @@ ALL = ["riddler", "heuristics", "chatbots", "random", "counters"]
 
 def test_bounds_and_center_mix():
     lo, hi = bounds_arrays(ALL)
-    assert lo.tolist() == [0.05, 0.05, 0.50, 0.00, 0.05]
-    assert hi.tolist() == [0.40, 0.30, 0.80, 0.05, 0.30]
+    assert lo.tolist() == [0.00, 0.00, 0.70, 0.00, 0.05]
+    assert hi.tolist() == [0.20, 0.15, 0.95, 0.05, 0.15]
     mix = center_mix(ALL)
     assert np.isclose(sum(mix.values()), 1)
     assert all(BOUNDS[g][0] <= w <= BOUNDS[g][1] for g, w in mix.items())
@@ -36,7 +36,7 @@ def test_infeasible_bounds_raise():
 
 def test_vertex_mixes_are_feasible_extreme_points():
     V = vertex_mixes(ALL)
-    assert len(V) == 18
+    assert len(V) == 17
     lo, hi = bounds_arrays(ALL)
     for mix in V:
         w = np.array([mix[g] for g in ALL])
@@ -66,7 +66,7 @@ def test_group_names_follow_bounds_order():
 
 def test_rank_candidates_sorts_by_worst_case():
     rng = np.random.default_rng(0)
-    names = ["riddler", "heuristics", "random", "counters"]  # no chatbots group: bounds stay feasible
+    names = ALL
     groups = {g: Group(random_splits(40, rng), np.full(40, 1 / 40)) for g in names}
     cands = random_splits(20, rng)
     ranked = rank_candidates(np.vstack([cands, cands[:3]]), groups, names, keep=10)
@@ -90,7 +90,7 @@ def _small_groups(rng, names):
 
 def test_generate_candidates_returns_distinct_valid_allocations():
     rng = np.random.default_rng(0)
-    names = ["riddler", "heuristics", "random", "counters"]
+    names = ALL
     X = generate_candidates(_small_groups(rng, names), names, rng, chains=3, steps=50, sample_size=60)
     assert X.ndim == 2 and X.shape[1] == 10 and len(X) >= 1
     assert (X.sum(axis=1) == 100).all() and (X >= 0).all()
@@ -99,7 +99,7 @@ def test_generate_candidates_returns_distinct_valid_allocations():
 
 def test_robust_search_never_ends_below_its_best_start():
     rng = np.random.default_rng(1)
-    names = ["riddler", "heuristics", "random", "counters"]
+    names = ALL
     groups = _small_groups(rng, names)
     starts = random_splits(4, rng)
     X = robust_search(groups, names, starts, rng, steps=100, per_group_sample=30)  # samples cover each whole group
@@ -113,6 +113,6 @@ def test_robust_search_never_ends_below_its_best_start():
     assert worst(X[:1])[0] >= worst(starts).max() - 1e-12
 
 
-def test_chatbot_answers_are_at_least_half_of_every_allowed_field():
-    assert all(mix["chatbots"] >= 0.5 - 1e-9 for mix in vertex_mixes(ALL))
-    assert center_mix(ALL)["chatbots"] >= 0.5
+def test_chatbot_answers_are_at_least_70_percent_of_every_allowed_field():
+    assert all(mix["chatbots"] >= 0.7 - 1e-9 for mix in vertex_mixes(ALL))
+    assert center_mix(ALL)["chatbots"] >= 0.7

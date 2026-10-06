@@ -18,7 +18,7 @@ The design is in [`docs/specs/`](docs/specs/), and the build plan is in [`docs/p
 ## Results
 
 The current pick is `[1, 4, 6, 1, 7, 29, 4, 7, 34, 7]`.
-It is optimized against a field where chatbot answers (10 from Claude, 10 from ChatGPT) make up 50-80% of applicants.
+It is optimized against a field where chatbot answers (10 from Claude, 10 from ChatGPT) make up 70-95% of applicants.
 The numbers for every finalist are in [`results/summary.json`](results/summary.json).
 
 ![Final allocation](results/allocation.png)

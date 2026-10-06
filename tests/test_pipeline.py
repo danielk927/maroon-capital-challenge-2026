@@ -3,6 +3,7 @@ import shutil
 from pathlib import Path
 
 import numpy as np
+import pytest
 
 from blotto.pipeline import Config, run
 
@@ -33,14 +34,21 @@ def test_quick_pipeline_end_to_end_with_claude_answers_only(tmp_path):
         assert (out / f"{name}.png").stat().st_size > 10_000
 
 
-def test_quick_pipeline_without_any_chatbot_answers(tmp_path):
+def test_quick_pipeline_without_any_chatbot_answers_stops_with_a_clear_error(tmp_path):
     data = tmp_path / "data"
     shutil.copytree(DATA / "riddler", data / "riddler")
+    with pytest.raises(ValueError, match="chatbot answers"):
+        run(Config.quick(), data, tmp_path / "results")
+
+
+def test_quick_pipeline_with_only_chatgpt_answers_keeps_them_and_skips_the_holdout(tmp_path):
+    data = tmp_path / "data"
+    shutil.copytree(DATA / "riddler", data / "riddler")
+    (data / "chatbots").mkdir(parents=True)
+    (data / "chatbots" / "answers.csv").write_text(HEADER + "\nchatgpt,verbatim,1,1,1,1,2,11,18,20,21,24,1\n")
     summary = run(Config.quick(), data, tmp_path / "results")
-    assert sum(summary["pick"]) == 100
-    assert summary["chatbot_answers"] == {"kept": {}, "skipped_rows": 0, "unknown_models": []}
-    assert "chatbots" not in summary["group_sizes"]
-    assert "chatgpt" in summary["heldout"]["chatbots_skipped"]
+    assert "chatbots" in summary["group_sizes"]
+    assert "other than 'chatgpt'" in summary["heldout"]["chatbots_skipped"]
 
 
 def test_quick_pipeline_holds_out_chatgpt_answers(tmp_path):

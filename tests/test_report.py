@@ -29,7 +29,7 @@ def test_price_list():
 
 def test_all_figures_are_written(tmp_path):
     rng = np.random.default_rng(0)
-    names = ["riddler", "heuristics", "random", "counters"]
+    names = ["riddler", "heuristics", "chatbots", "random", "counters"]
     groups = {g: Group(random_splits(30, rng), np.full(30, 1 / 30)) for g in names}
     field = field_from(groups, center_mix(names))
     pick = np.array([1, 4, 7, 9, 13, 23, 26, 4, 6, 7])
