@@ -1,7 +1,11 @@
-"""Static figures for the writeup: light surface, validated palette, one axis per chart."""
+"""Static figures for the writeup: light surface, validated palette, one axis per chart.
 
+Also the descriptive statistics the writeup cites and the CSV data behind its LaTeX figures.
+"""
+
+import csv
 import itertools
-from collections.abc import Mapping, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from pathlib import Path
 
 import matplotlib
@@ -14,6 +18,7 @@ from matplotlib.ticker import MaxNLocator, PercentFormatter
 
 from blotto.pool import Field, Group
 from blotto.robust import bounds_arrays
+from blotto.scoring import BITS, N_FIELDS, SCORE_TABLE
 
 SURFACE = "#fcfcfb"
 INK = "#0b0b0b"
@@ -124,6 +129,92 @@ def pareto_mask(win: np.ndarray, pts: np.ndarray) -> np.ndarray:
         dominated = (win >= win[i]) & (pts >= pts[i]) & ((win > win[i]) | (pts > pts[i]))
         keep[i] = not dominated.any()
     return keep
+
+
+BASE = np.array([sum(v + 1 for v in range(N_FIELDS) if mask >> v & 1) for mask in range(1 << N_FIELDS)])
+
+
+def outcome_shares(pick: np.ndarray, field: Field, top: int = 6) -> list[dict]:
+    """The sets of battlefields the pick wins most often against the field, with their scores and weighted shares."""
+    masks = (np.asarray(pick)[None, :] > field.entries) @ BITS
+    shares = np.bincount(masks, weights=field.weights, minlength=1 << N_FIELDS)
+    return [
+        {"won": [v + 1 for v in range(N_FIELDS) if m >> v & 1], "score": int(SCORE_TABLE[m]) / 100, "share": float(shares[m])}
+        for m in np.argsort(-shares, kind="stable")[:top]
+    ]
+
+
+def bonus_rates(X: np.ndarray, field: Field) -> tuple[np.ndarray, np.ndarray]:
+    """Per row of X, the weighted share of matches it wins a set whose base is a positive multiple of 5, and wins 6."""
+    masks = (np.atleast_2d(X)[:, None, :] > field.entries[None]) @ BITS
+    base = BASE[masks]
+    return ((base > 0) & (base % 5 == 0)) @ field.weights, (masks >> 5 & 1) @ field.weights
+
+
+def dot_offsets(values: np.ndarray, spacing: float = 0.1, max_width: float = 0.6) -> np.ndarray:
+    """Horizontal offsets for a dot strip: equal values sit side by side around zero, squeezed into max_width."""
+    values = np.asarray(values)
+    offsets = np.zeros(len(values))
+    for v in np.unique(values):
+        idx = np.flatnonzero(values == v)
+        step = min(spacing, max_width / max(1, len(idx) - 1))
+        offsets[idx] = (np.arange(len(idx)) - (len(idx) - 1) / 2) * step
+    return offsets
+
+
+def _write_csv(path: Path, header: Sequence[str], rows: Iterable[Sequence]) -> None:
+    with open(path, "w", newline="") as fh:
+        writer = csv.writer(fh)
+        writer.writerow(header)
+        writer.writerows(rows)
+
+
+def write_figure_data(
+    out_dir: Path,
+    pick: np.ndarray,
+    beaten: np.ndarray,
+    answers: Mapping[str, np.ndarray],
+    win: np.ndarray,
+    pts: np.ndarray,
+    pick_index: int,
+    above_wins: np.ndarray,
+    above_points: np.ndarray,
+) -> None:
+    """The CSV files behind the LaTeX writeup's figures: allocation, chatbot bids, candidates, and tournament ranks."""
+    out_dir.mkdir(parents=True, exist_ok=True)
+    _write_csv(
+        out_dir / "allocation.csv",
+        ["battlefield", "troops", "share_beaten"],
+        [(i + 1, int(t), round(float(b), 6)) for i, (t, b) in enumerate(zip(pick, beaten))],
+    )
+    models = [m for m, rows in sorted(answers.items()) for _ in rows]
+    bids = np.vstack([answers[m] for m in sorted(answers)])
+    _write_csv(
+        out_dir / "chatbot_bids.csv",
+        ["battlefield", "troops", "offset", "model"],
+        [
+            (i + 1, int(t), round(float(o), 6), m)
+            for i in range(N_FIELDS)
+            for t, o, m in zip(bids[:, i], dot_offsets(bids[:, i]), models)
+        ],
+    )
+    front = pareto_mask(win, pts)
+    _write_csv(
+        out_dir / "candidates.csv",
+        ["win_rate", "avg_points", "frontier", "pick"],
+        [
+            (round(float(win[k]), 6), round(float(pts[k]), 6), int(front[k]), int(k == pick_index))
+            for k in np.lexsort((-pts, win))
+        ],
+    )
+    upper = max(30, int(np.floor(max(above_wins.max(), above_points.max()) * 100 + 1e-9)) + 1)
+    wins = np.bincount(np.floor(above_wins * 100 + 1e-9).astype(int), minlength=upper)
+    points = np.bincount(np.floor(above_points * 100 + 1e-9).astype(int), minlength=upper)
+    _write_csv(
+        out_dir / "tournaments.csv",
+        ["share_above", "wins", "points"],
+        [(b / 100, int(w), int(p)) for b, (w, p) in enumerate(zip(wins, points))],
+    )
 
 
 def plot_pool(groups: Mapping[str, Group], names: Sequence[str], mix: Mapping[str, float], path: Path) -> plt.Figure:

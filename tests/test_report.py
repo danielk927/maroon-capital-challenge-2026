@@ -1,9 +1,14 @@
+import csv
+
 import numpy as np
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.text import Text
 
 from blotto.pool import Field, Group, field_from, random_splits
 from blotto.report import (
+    bonus_rates,
+    dot_offsets,
+    outcome_shares,
     pareto_mask,
     plot_allocation,
     plot_candidates,
@@ -12,8 +17,13 @@ from blotto.report import (
     plot_price_lists,
     plot_tournaments,
     price_list,
+    write_figure_data,
 )
 from blotto.robust import center_mix
+
+# The pick wins battlefields 1-5 against the first opponent, all ten against the second, and 6-10 against the third.
+PICK = np.array([11] * 5 + [9] * 5)
+THREE = Field(np.array([[10] * 10, [0] * 10, [20] * 5 + [0] * 5]), np.array([0.5, 0.3, 0.2]))
 
 
 def test_pareto_mask():
@@ -25,6 +35,60 @@ def test_pareto_mask():
 def test_price_list():
     field = Field(np.array([[10] * 10, [20] * 5 + [0] * 5]), np.array([0.25, 0.75]))
     assert price_list(field, 0, np.array([0, 10, 11, 20, 21])).tolist() == [0.0, 0.0, 0.25, 0.25, 1.0]
+
+
+def test_dot_offsets_put_equal_values_side_by_side():
+    offsets = dot_offsets(np.array([5, 1, 5, 5, 1, 9]), spacing=0.1, max_width=0.6)
+    assert offsets[5] == 0
+    assert sorted(offsets[[0, 2, 3]].round(9).tolist()) == [-0.1, 0.0, 0.1]
+    assert sorted(offsets[[1, 4]].round(9).tolist()) == [-0.05, 0.05]
+
+
+def test_dot_offsets_squeeze_long_runs_into_max_width():
+    offsets = dot_offsets(np.zeros(13), spacing=0.1, max_width=0.6)
+    assert np.isclose(offsets.min(), -0.3) and np.isclose(offsets.max(), 0.3)
+
+
+def test_outcome_shares():
+    assert outcome_shares(PICK, THREE, top=2) == [
+        {"won": [1, 2, 3, 4, 5], "score": 31.5, "share": 0.5},
+        {"won": list(range(1, 11)), "score": 127.05, "share": 0.3},
+    ]
+
+
+def test_bonus_rates():
+    all_on_one = np.array([100] + [0] * 9)  # wins only battlefield 1 against all three
+    mod5, six = bonus_rates(np.vstack([PICK, all_on_one]), THREE)
+    assert np.allclose(mod5, [1.0, 0.0]) and np.allclose(six, [0.5, 0.0])
+
+
+def _read(path):
+    with open(path, newline="") as fh:
+        return list(csv.DictReader(fh))
+
+
+def test_figure_data_is_written(tmp_path):
+    answers = {"claude": np.array([[0] * 5 + [20] * 5, [10] * 10]), "chatgpt": np.array([[10] * 10])}
+    win, pts = np.array([0.8, 0.9, 0.7, 0.85]), np.array([60.0, 50.0, 55.0, 40.0])
+    write_figure_data(
+        tmp_path, PICK, np.linspace(0, 0.9, 10), answers, win, pts, 0, np.array([0.08, 0.081, 0.12]), np.zeros(3)
+    )
+    allocation = _read(tmp_path / "allocation.csv")
+    assert [int(r["troops"]) for r in allocation] == PICK.tolist()
+    assert [int(r["battlefield"]) for r in allocation] == list(range(1, 11))
+    bids = _read(tmp_path / "chatbot_bids.csv")
+    assert len(bids) == 30 and {r["model"] for r in bids} == {"claude", "chatgpt"}
+    # The two answers with 10 troops on battlefield 1 sit side by side; the lone 0 sits on the center line.
+    first = sorted(float(r["offset"]) for r in bids if r["battlefield"] == "1" and r["troops"] == "10")
+    assert first[0] == -first[1] < 0 and next(r["offset"] for r in bids if r["troops"] == "0") == "0.0"
+    candidates = _read(tmp_path / "candidates.csv")
+    assert [float(r["win_rate"]) for r in candidates] == [0.7, 0.8, 0.85, 0.9]
+    assert [r["frontier"] for r in candidates] == ["0", "1", "0", "1"]
+    assert [r["pick"] for r in candidates] == ["0", "1", "0", "0"]
+    tournaments = _read(tmp_path / "tournaments.csv")
+    assert sum(int(r["wins"]) for r in tournaments) == 3 and sum(int(r["points"]) for r in tournaments) == 3
+    by_bin = {round(float(r["share_above"]), 2): int(r["wins"]) for r in tournaments}
+    assert by_bin[0.08] == 2 and by_bin[0.12] == 1
 
 
 def test_all_figures_are_written(tmp_path):

@@ -4,7 +4,7 @@ import pytest
 from blotto.pool import Field, Group, random_splits
 from blotto.robust import bounds_arrays
 from blotto.scoring import play
-from blotto.validate import counter_check, heldout_report, mock_tournaments, sample_mix
+from blotto.validate import counter_check, heldout_report, mock_tournaments, one_troop_moves, sample_mix
 
 NAMES = ["riddler", "heuristics", "chatbots", "random", "counters"]
 WEAK = np.array([[100] + [0] * 9])
@@ -65,6 +65,17 @@ def test_counter_check_finds_a_counter_that_beats_the_pick():
     assert mine[0, 0] > theirs[0, 0]
     assert 0 <= result["pool_share_within_10"] <= 1
     assert 0 <= result["pick_win_rate_vs_counter_family"] <= 1
+
+
+def test_one_troop_moves_finds_that_a_single_tying_troop_decides_the_match():
+    # The pick wins 50.82 to 36.5. Its one troop on battlefield 1 ties the opponent's one troop there; without
+    # the tie the opponent also wins battlefield 1, its base becomes 30, a multiple of 5, and it wins 52.5 to 50.82.
+    pick = np.array([1, 4, 6, 1, 7, 28, 3, 5, 33, 12])
+    field = Field(np.array([[1, 1, 3, 4, 1, 1, 21, 19, 28, 21]]), np.array([1.0]))
+    moves = {m["from"]: m for m in one_troop_moves(pick, field)}
+    assert set(moves) == set(range(1, 11))
+    assert moves[1]["win_rate"] == 0.0
+    assert moves[2]["win_rate"] == 1.0 and moves[2]["to"] != 2
 
 
 def test_sample_mix_returns_the_only_mix_when_maximums_total_exactly_one():

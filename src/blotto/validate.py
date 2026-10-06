@@ -6,7 +6,7 @@ import numpy as np
 
 from blotto.pool import Field, Group, jitter, random_splits
 from blotto.robust import BOUNDS, bounds_arrays
-from blotto.scoring import play
+from blotto.scoring import N_FIELDS, play
 from blotto.search import metrics, rating, search
 
 TOP_QUARTILE = 0.25
@@ -90,6 +90,28 @@ def heldout_report(
             "avg_points": float(avg_points[0]),
             "rating": float(rating(x, field, lam)[0]),
         }
+    return out
+
+
+def one_troop_moves(pick: np.ndarray, field: Field) -> list[dict]:
+    """For each battlefield with troops, the best win rate against the field after moving one of them elsewhere."""
+    pick = np.asarray(pick, dtype=np.int64)
+    out = []
+    for i in np.flatnonzero(pick):
+        moved = np.repeat(pick[None], N_FIELDS, axis=0)
+        moved[:, i] -= 1
+        moved[np.arange(N_FIELDS), np.arange(N_FIELDS)] += 1  # row j moves the troop to battlefield j + 1
+        targets = np.delete(np.arange(N_FIELDS), i)
+        win_rate, avg_points = metrics(moved[targets], field)
+        best = int(np.argmax(win_rate))
+        out.append(
+            {
+                "from": int(i) + 1,
+                "to": int(targets[best]) + 1,
+                "win_rate": float(win_rate[best]),
+                "avg_points": float(avg_points[best]),
+            }
+        )
     return out
 
 

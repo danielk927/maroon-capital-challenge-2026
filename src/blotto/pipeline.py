@@ -33,7 +33,7 @@ from blotto.robust import (
 )
 from blotto.scoring import MAX_SCORE
 from blotto.search import metrics
-from blotto.validate import counter_check, heldout_report, mock_tournaments
+from blotto.validate import counter_check, heldout_report, mock_tournaments, one_troop_moves
 
 
 @dataclass(frozen=True)
@@ -148,11 +148,30 @@ def run(config: Config, data_dir: Path, out_dir: Path) -> dict:
 
     n_final = len(sel.finalists)
     win_center, pts_center = metrics(sel.ranked.candidates, center)
+    beaten = np.array([report.price_list(center, i, np.array([sel.pick[i]]))[0] for i in range(len(sel.pick))])
+    mod5, six = report.bonus_rates(np.vstack([sel.pick[None], *(answers[m] for m in sorted(answers))]), center)
+    above_wins = sel.tournaments["share_above_wins"][:, sel.pick_index]
+    above_points = sel.tournaments["share_above_points"][:, sel.pick_index]
     summary = {
         "pick": sel.pick.tolist(),
         "pick_vs_center_field": {
             "win_rate": float(win_center[sel.pick_index]),
             "avg_points": float(pts_center[sel.pick_index]),
+        },
+        "pick_share_beaten": beaten.round(4).tolist(),
+        "pick_outcomes": report.outcome_shares(sel.pick, center),
+        "bonus_rates": {
+            "pick": {"base_multiple_of_5": float(mod5[0]), "wins_6": float(six[0])},
+            "chatbot_mean": {"base_multiple_of_5": float(mod5[1:].mean()), "wins_6": float(six[1:].mean())},
+        },
+        "one_troop_moves": one_troop_moves(sel.pick, center),
+        "tournament_ranks": {
+            "median_share_above_wins": float(np.median(above_wins)),
+            "max_share_above_wins": float(above_wins.max()),
+            "first_by_wins": float((above_wins == 0).mean()),
+            "median_share_above_points": float(np.median(above_points)),
+            "max_share_above_points": float(above_points.max()),
+            "first_by_points": float((above_points == 0).mean()),
         },
         "finalists": [
             {
@@ -178,16 +197,15 @@ def run(config: Config, data_dir: Path, out_dir: Path) -> dict:
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
 
-    beaten = np.array([report.price_list(center, i, np.array([sel.pick[i]]))[0] for i in range(len(sel.pick))])
     ratings = 0.5 * sel.ranked.win[:n_final] + 0.5 * sel.ranked.pts[:n_final] / MAX_SCORE
     report.plot_pool(sel.groups, sel.names, center_mix(sel.names), out_dir / "pool.png")
     report.plot_price_lists(center, sel.pick, out_dir / "price_lists.png")
     report.plot_candidates(win_center, pts_center, sel.pick_index, out_dir / "candidates.png")
     report.plot_finalists(sel.finalists, ratings, sel.names, out_dir / "finalists.png")
-    report.plot_tournaments(
-        sel.tournaments["share_above_wins"][:, sel.pick_index],
-        sel.tournaments["share_above_points"][:, sel.pick_index],
-        out_dir / "tournaments.png",
-    )
+    report.plot_tournaments(above_wins, above_points, out_dir / "tournaments.png")
     report.plot_allocation(sel.pick, beaten, out_dir / "allocation.png")
+    report.write_figure_data(
+        out_dir / "figure_data", sel.pick, beaten, answers, win_center, pts_center, sel.pick_index,
+        above_wins, above_points,
+    )
     return summary

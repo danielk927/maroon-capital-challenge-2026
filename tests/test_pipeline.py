@@ -10,6 +10,7 @@ from blotto.pipeline import Config, run
 DATA = Path(__file__).resolve().parents[1] / "data"
 HEADER = "model,prompt_variant,sample," + ",".join(f"b{i}" for i in range(1, 11))
 FIGURES = ["pool", "price_lists", "candidates", "finalists", "tournaments", "allocation"]
+FIGURE_DATA = ["allocation", "chatbot_bids", "candidates", "tournaments"]
 
 
 def test_quick_pipeline_end_to_end_with_claude_answers_only(tmp_path):
@@ -32,6 +33,15 @@ def test_quick_pipeline_end_to_end_with_claude_answers_only(tmp_path):
     assert summary["finalists"][0]["worst_case_rating"] >= summary["finalists"][-1]["worst_case_rating"]
     for name in FIGURES:
         assert (out / f"{name}.png").stat().st_size > 10_000
+    for name in FIGURE_DATA:
+        assert (out / "figure_data" / f"{name}.csv").stat().st_size > 0
+    assert len(summary["pick_share_beaten"]) == 10 and all(0 <= s <= 1 for s in summary["pick_share_beaten"])
+    assert sum(o["share"] for o in summary["pick_outcomes"]) <= 1 + 1e-9
+    assert set(summary["bonus_rates"]) == {"pick", "chatbot_mean"}
+    assert [m["from"] for m in summary["one_troop_moves"]] == [i + 1 for i in range(10) if pick[i] > 0]
+    ranks = summary["tournament_ranks"]
+    assert 0 <= ranks["median_share_above_wins"] <= ranks["max_share_above_wins"] <= 1
+    assert 0 <= ranks["first_by_points"] <= 1
 
 
 def test_quick_pipeline_without_any_chatbot_answers_stops_with_a_clear_error(tmp_path):
