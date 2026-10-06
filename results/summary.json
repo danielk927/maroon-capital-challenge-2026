@@ -1,546 +1,699 @@
 {
   "pick": [
-    0,
-    0,
-    0,
-    0,
-    15,
-    28,
     1,
+    4,
+    6,
     1,
-    33,
-    22
+    7,
+    29,
+    4,
+    7,
+    34,
+    7
   ],
   "pick_vs_center_field": {
-    "win_rate": 0.77810657797487,
-    "avg_points": 58.69024362749445
+    "win_rate": 0.7952461936437542,
+    "avg_points": 59.351314684996304
   },
   "finalists": [
     {
       "allocation": [
-        0,
-        0,
-        0,
-        0,
-        15,
-        28,
         1,
+        4,
+        6,
         1,
-        33,
-        22
+        7,
+        29,
+        4,
+        7,
+        34,
+        7
       ],
-      "worst_case_rating": 0.5350791333090749,
+      "worst_case_rating": 0.5410980994615141,
       "top_quartile_wins": 1.0,
       "top_quartile_points": 1.0,
       "top_quartile_both": 1.0,
       "win_rate_by_group": {
-        "riddler": 0.7154,
-        "heuristics": 0.8182,
-        "random": 0.791,
-        "counters": 0.8667
+        "riddler": 0.7015,
+        "heuristics": 0.6432,
+        "chatbots": 0.885,
+        "random": 0.71,
+        "counters": 0.7467
       },
       "avg_points_by_group": {
-        "riddler": 54.12,
-        "heuristics": 62.43,
-        "random": 58.44,
-        "counters": 64.45
+        "riddler": 49.18,
+        "heuristics": 60.35,
+        "chatbots": 66.32,
+        "random": 50.06,
+        "counters": 46.88
       }
     },
     {
       "allocation": [
-        0,
         1,
+        5,
+        6,
         1,
-        0,
-        13,
-        28,
-        1,
-        1,
+        6,
+        29,
+        5,
+        7,
         33,
-        22
+        7
       ],
-      "worst_case_rating": 0.5319040970587903,
+      "worst_case_rating": 0.5403017868268599,
       "top_quartile_wins": 1.0,
       "top_quartile_points": 1.0,
       "top_quartile_both": 1.0,
       "win_rate_by_group": {
-        "riddler": 0.7108,
-        "heuristics": 0.8727,
-        "random": 0.768,
+        "riddler": 0.7,
+        "heuristics": 0.65,
+        "chatbots": 0.885,
+        "random": 0.733,
+        "counters": 0.78
+      },
+      "avg_points_by_group": {
+        "riddler": 49.24,
+        "heuristics": 60.5,
+        "chatbots": 65.74,
+        "random": 51.1,
+        "counters": 46.16
+      }
+    },
+    {
+      "allocation": [
+        1,
+        4,
+        6,
+        2,
+        6,
+        29,
+        5,
+        7,
+        33,
+        7
+      ],
+      "worst_case_rating": 0.5402841053943704,
+      "top_quartile_wins": 0.999,
+      "top_quartile_points": 1.0,
+      "top_quartile_both": 0.999,
+      "win_rate_by_group": {
+        "riddler": 0.6919,
+        "heuristics": 0.6432,
+        "chatbots": 0.885,
+        "random": 0.733,
+        "counters": 0.78
+      },
+      "avg_points_by_group": {
+        "riddler": 49.08,
+        "heuristics": 60.12,
+        "chatbots": 66.24,
+        "random": 50.84,
+        "counters": 45.86
+      }
+    },
+    {
+      "allocation": [
+        1,
+        4,
+        6,
+        1,
+        4,
+        30,
+        5,
+        7,
+        35,
+        7
+      ],
+      "worst_case_rating": 0.5383750690995828,
+      "top_quartile_wins": 1.0,
+      "top_quartile_points": 1.0,
+      "top_quartile_both": 1.0,
+      "win_rate_by_group": {
+        "riddler": 0.6881,
+        "heuristics": 0.6432,
+        "chatbots": 0.885,
+        "random": 0.712,
         "counters": 0.88
       },
       "avg_points_by_group": {
-        "riddler": 53.46,
-        "heuristics": 66.07,
-        "random": 56.43,
-        "counters": 58.63
+        "riddler": 48.88,
+        "heuristics": 60.63,
+        "chatbots": 64.69,
+        "random": 49.62,
+        "counters": 52.95
+      }
+    },
+    {
+      "allocation": [
+        1,
+        4,
+        6,
+        2,
+        6,
+        29,
+        3,
+        7,
+        35,
+        7
+      ],
+      "worst_case_rating": 0.5377923839323344,
+      "top_quartile_wins": 0.999,
+      "top_quartile_points": 1.0,
+      "top_quartile_both": 0.999,
+      "win_rate_by_group": {
+        "riddler": 0.6916,
+        "heuristics": 0.6432,
+        "chatbots": 0.885,
+        "random": 0.693,
+        "counters": 0.8133
+      },
+      "avg_points_by_group": {
+        "riddler": 49.12,
+        "heuristics": 60.07,
+        "chatbots": 66.24,
+        "random": 48.97,
+        "counters": 42.63
       }
     },
     {
       "allocation": [
         0,
-        1,
-        1,
+        4,
+        7,
         0,
-        18,
+        7,
         28,
-        3,
-        3,
-        33,
-        13
+        5,
+        7,
+        35,
+        7
       ],
-      "worst_case_rating": 0.5313122597036103,
-      "top_quartile_wins": 1.0,
+      "worst_case_rating": 0.5366450806878064,
+      "top_quartile_wins": 0.999,
       "top_quartile_points": 1.0,
-      "top_quartile_both": 1.0,
+      "top_quartile_both": 0.999,
       "win_rate_by_group": {
-        "riddler": 0.7061,
-        "heuristics": 0.8136,
-        "random": 0.764,
-        "counters": 0.9567
+        "riddler": 0.6857,
+        "heuristics": 0.6523,
+        "chatbots": 0.85,
+        "random": 0.72,
+        "counters": 0.8367
       },
       "avg_points_by_group": {
-        "riddler": 53.08,
-        "heuristics": 63.93,
-        "random": 54.96,
-        "counters": 62.14
+        "riddler": 50.85,
+        "heuristics": 58.17,
+        "chatbots": 65.44,
+        "random": 50.93,
+        "counters": 44.28
+      }
+    },
+    {
+      "allocation": [
+        0,
+        4,
+        6,
+        0,
+        5,
+        28,
+        4,
+        6,
+        35,
+        12
+      ],
+      "worst_case_rating": 0.5364798252124144,
+      "top_quartile_wins": 0.999,
+      "top_quartile_points": 1.0,
+      "top_quartile_both": 0.999,
+      "win_rate_by_group": {
+        "riddler": 0.6797,
+        "heuristics": 0.6523,
+        "chatbots": 0.85,
+        "random": 0.736,
+        "counters": 0.8467
+      },
+      "avg_points_by_group": {
+        "riddler": 50.77,
+        "heuristics": 59.73,
+        "chatbots": 65.19,
+        "random": 52.32,
+        "counters": 46.05
       }
     }
   ],
   "heldout": {
     "pick": [
-      0,
-      1,
-      1,
-      0,
-      18,
-      28,
-      1,
       2,
-      34,
-      15
+      3,
+      4,
+      6,
+      3,
+      29,
+      6,
+      6,
+      32,
+      9
     ],
     "same_as_final_pick": false,
     "riddler": {
       "seen": {
-        "win_rate": 0.6872900335946249,
-        "avg_points": 54.15144456886898,
-        "rating": 0.5567557785795596
+        "win_rate": 0.6982082866741322,
+        "avg_points": 48.755957446808516,
+        "rating": 0.5409811895661433
       },
       "round_4": {
-        "win_rate": 0.6769722814498934,
-        "avg_points": 50.12480810234541,
-        "rating": 0.5357502418754599
+        "win_rate": 0.6396588486140724,
+        "avg_points": 45.8247974413646,
+        "rating": 0.5001710120337761
       }
     },
-    "chatbots_skipped": "no answers from model 'gemini'"
+    "chatbots": {
+      "seen": {
+        "win_rate": 0.9,
+        "avg_points": 70.796,
+        "rating": 0.7286147186147187
+      },
+      "chatgpt": {
+        "win_rate": 0.9,
+        "avg_points": 58.19,
+        "rating": 0.679004329004329
+      }
+    }
   },
   "counter_check": {
     "counter": [
       0,
-      8,
-      2,
-      11,
-      16,
-      29,
       7,
-      3,
+      11,
+      5,
+      9,
+      30,
+      17,
+      12,
       0,
-      24
+      9
     ],
     "pool_share_within_10": 0.0,
     "pick_win_rate_vs_counter_family": 0.0,
-    "pick_avg_points_vs_counter_family": 11.741176470588234
+    "pick_avg_points_vs_counter_family": 15.855490196078431
   },
   "chatbot_answers": {
-    "kept": {},
+    "kept": {
+      "chatgpt": 10,
+      "claude": 10
+    },
     "skipped_rows": 0,
     "unknown_models": []
   },
   "counters": [
     [
-      0,
       1,
       2,
-      3,
-      13,
-      23,
-      26,
       4,
-      22,
-      6
-    ],
-    [
       1,
-      1,
-      3,
-      3,
       17,
-      22,
-      17,
+      28,
+      3,
       4,
-      26,
-      6
+      33,
+      7
+    ],
+    [
+      3,
+      2,
+      5,
+      13,
+      17,
+      2,
+      22,
+      27,
+      4,
+      5
     ],
     [
       0,
-      1,
-      3,
-      13,
-      2,
-      23,
-      26,
       4,
+      4,
+      14,
+      5,
+      2,
+      26,
+      3,
+      33,
+      9
+    ],
+    [
+      3,
+      2,
+      5,
+      9,
+      17,
+      2,
       22,
-      6
+      27,
+      5,
+      8
+    ],
+    [
+      3,
+      2,
+      4,
+      5,
+      18,
+      26,
+      3,
+      27,
+      4,
+      8
     ],
     [
       1,
+      2,
+      4,
       1,
+      18,
+      3,
+      25,
+      28,
+      6,
+      12
+    ],
+    [
       2,
-      2,
-      16,
-      22,
+      3,
+      3,
+      6,
+      18,
       3,
       21,
-      26,
-      6
-    ],
-    [
-      1,
-      1,
-      3,
-      11,
-      3,
-      23,
-      22,
-      4,
-      26,
-      6
-    ],
-    [
-      2,
-      2,
-      1,
-      1,
-      14,
-      23,
-      18,
-      5,
-      27,
-      7
-    ],
-    [
-      0,
-      2,
-      1,
-      1,
-      14,
-      24,
-      2,
-      22,
-      27,
-      7
-    ],
-    [
-      1,
-      2,
-      3,
-      2,
-      14,
-      24,
-      2,
-      18,
-      27,
-      7
-    ],
-    [
+      28,
       6,
-      7,
-      1,
-      2,
-      4,
-      23,
-      18,
-      5,
-      27,
-      7
-    ],
-    [
-      0,
-      2,
-      0,
-      0,
-      17,
-      24,
-      1,
-      22,
-      27,
-      7
-    ],
-    [
-      1,
-      1,
-      1,
-      1,
-      18,
-      25,
-      2,
-      2,
-      28,
-      21
-    ],
-    [
-      1,
-      5,
-      2,
-      2,
-      3,
-      25,
-      3,
-      23,
-      28,
-      8
-    ],
-    [
-      1,
-      1,
-      2,
-      2,
-      15,
-      25,
-      3,
-      4,
-      28,
-      19
-    ],
-    [
-      1,
-      2,
-      2,
-      2,
-      11,
-      25,
-      3,
-      18,
-      28,
-      8
-    ],
-    [
-      1,
-      2,
-      4,
-      2,
-      12,
-      25,
-      3,
-      3,
-      28,
-      20
-    ],
-    [
-      1,
-      1,
-      1,
-      1,
-      15,
-      26,
-      2,
-      2,
-      30,
-      21
-    ],
-    [
-      2,
-      2,
-      6,
-      3,
-      1,
-      26,
-      17,
-      3,
-      30,
       10
     ],
     [
-      2,
-      2,
+      1,
+      1,
+      8,
+      10,
       5,
-      3,
-      3,
-      26,
-      4,
-      19,
       29,
-      7
+      27,
+      4,
+      6,
+      9
     ],
     [
+      0,
+      0,
+      0,
+      14,
       2,
-      2,
-      6,
       3,
+      27,
+      4,
+      34,
+      16
+    ],
+    [
       3,
-      25,
-      17,
+      4,
       5,
-      28,
+      4,
+      7,
+      27,
+      4,
+      31,
+      6,
       9
     ],
     [
       1,
       2,
-      3,
-      1,
-      18,
-      26,
       4,
+      1,
+      16,
+      28,
+      3,
       5,
       29,
       11
     ],
     [
       0,
-      1,
-      1,
       0,
-      12,
-      27,
-      4,
-      3,
-      31,
-      21
-    ],
-    [
-      1,
-      1,
-      1,
-      1,
+      0,
       14,
-      27,
-      1,
       3,
-      30,
-      21
+      3,
+      28,
+      4,
+      35,
+      13
     ],
     [
       0,
+      0,
+      0,
+      14,
+      2,
+      2,
+      28,
+      3,
+      35,
+      16
+    ],
+    [
+      1,
       2,
       3,
-      11,
       4,
+      12,
+      28,
       27,
-      18,
-      6,
-      21,
-      8
-    ],
-    [
-      3,
       5,
-      1,
-      1,
-      1,
-      26,
-      17,
-      3,
-      32,
+      7,
       11
     ],
     [
+      1,
       2,
-      2,
-      6,
-      3,
-      3,
-      26,
-      18,
       5,
-      23,
-      12
+      12,
+      16,
+      28,
+      3,
+      4,
+      7,
+      22
+    ],
+    [
+      1,
+      1,
+      5,
+      12,
+      5,
+      29,
+      28,
+      5,
+      8,
+      6
+    ],
+    [
+      1,
+      1,
+      5,
+      10,
+      4,
+      29,
+      28,
+      5,
+      7,
+      10
+    ],
+    [
+      1,
+      2,
+      5,
+      12,
+      19,
+      29,
+      4,
+      4,
+      2,
+      22
+    ],
+    [
+      0,
+      0,
+      0,
+      15,
+      3,
+      3,
+      28,
+      5,
+      33,
+      13
+    ],
+    [
+      1,
+      2,
+      5,
+      12,
+      15,
+      28,
+      3,
+      5,
+      7,
+      22
+    ],
+    [
+      1,
+      1,
+      5,
+      10,
+      5,
+      30,
+      28,
+      6,
+      8,
+      6
+    ],
+    [
+      1,
+      2,
+      3,
+      4,
+      5,
+      30,
+      28,
+      6,
+      10,
+      11
+    ],
+    [
+      0,
+      0,
+      0,
+      14,
+      2,
+      2,
+      29,
+      6,
+      33,
+      14
+    ],
+    [
+      1,
+      2,
+      5,
+      12,
+      19,
+      29,
+      3,
+      5,
+      2,
+      22
     ],
     [
       1,
       2,
       3,
       1,
-      14,
-      26,
+      15,
+      29,
+      3,
+      5,
+      28,
+      13
+    ],
+    [
+      1,
+      2,
+      6,
+      6,
+      5,
+      30,
+      29,
+      7,
+      8,
+      6
+    ],
+    [
+      1,
+      2,
+      3,
+      4,
+      4,
+      30,
+      28,
+      6,
+      11,
+      11
+    ],
+    [
+      3,
+      5,
+      7,
+      2,
+      7,
+      3,
       4,
       6,
-      31,
-      12
+      33,
+      30
     ],
     [
-      0,
-      0,
-      2,
-      1,
-      13,
-      27,
-      3,
-      1,
-      32,
-      21
-    ],
-    [
-      1,
-      3,
-      2,
-      2,
-      13,
-      27,
-      22,
-      5,
-      5,
-      20
-    ],
-    [
-      0,
-      2,
-      2,
-      0,
-      12,
-      27,
-      3,
-      5,
-      32,
-      17
-    ],
-    [
-      1,
-      5,
+      4,
       5,
       7,
-      13,
-      27,
-      22,
-      7,
+      2,
+      17,
+      3,
+      1,
       5,
-      8
+      33,
+      23
+    ],
+    [
+      2,
+      3,
+      3,
+      14,
+      18,
+      4,
+      4,
+      28,
+      11,
+      13
     ]
   ],
   "group_sizes": {
     "riddler": 9020,
     "heuristics": 88,
+    "chatbots": 40,
     "random": 1000,
     "counters": 60
   },
   "bounds": {
     "riddler": [
-      0.2,
-      0.5
+      0.05,
+      0.4
     ],
     "heuristics": [
-      0.1,
+      0.05,
       0.3
+    ],
+    "chatbots": [
+      0.5,
+      0.8
     ],
     "random": [
       0.0,
-      0.1
+      0.05
     ],
     "counters": [
       0.05,
-      0.25
+      0.3
     ]
   },
   "lam_range": [
@@ -563,6 +716,6 @@
     "max_finalists": 10,
     "tournaments": 1000,
     "heldout_riddler_round": 4,
-    "heldout_chatbot_model": "gemini"
+    "heldout_chatbot_model": "chatgpt"
   }
 }
