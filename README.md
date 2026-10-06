@@ -29,6 +29,11 @@ The numbers for every finalist are in [`results/summary.json`](results/summary.j
 
 ![Mock tournaments](results/tournaments.png)
 
+## Writeup
+
+The two-page writeup is [`writeup/writeup.pdf`](writeup/writeup.pdf), built from [`writeup/writeup.tex`](writeup/writeup.tex).
+Its figures are drawn with pgfplots from the CSV files the pipeline writes to `results/figure_data/`.
+
 ## Usage
 
 ```bash
@@ -37,9 +42,11 @@ uv run pytest
 uv run ruff check
 uv run python scripts/run_pipeline.py
 uv run python scripts/run_pipeline.py --quick --out .smoke/results
+tectonic writeup/writeup.tex
 ```
 
-The full run takes about 5 minutes; the `--quick` run is a smoke test with tiny settings.
+The full run takes about 2 minutes; the `--quick` run is a smoke test with tiny settings.
+The writeup builds with [Tectonic](https://tectonic-typesetting.github.io/) (`brew install tectonic`), which fetches the LaTeX packages it needs on first use.
 
 ## Data
 
