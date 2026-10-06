@@ -19,3 +19,5 @@ Every answer was collected by hand through each chatbot's own web interface, usi
 - Record the allocation the chatbot recommends exactly as given.
   The pipeline skips rows that are not 10 non-negative integers summing to 100.
 - Aim for at least 15 answers per model: about 10 `verbatim` and 5 `ask`.
+
+Answers collected for 2026: 10 from Claude (Opus 5.5, high effort) and 10 from ChatGPT (Astra, medium), all with the `verbatim` prompt.
