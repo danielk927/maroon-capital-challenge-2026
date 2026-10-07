@@ -22,8 +22,8 @@ ALL = ["riddler", "heuristics", "chatbots", "random", "counters"]
 
 def test_bounds_and_center_mix():
     lo, hi = bounds_arrays(ALL)
-    assert lo.tolist() == [0.00, 0.00, 0.70, 0.00, 0.05]
-    assert hi.tolist() == [0.20, 0.15, 0.95, 0.05, 0.15]
+    assert lo.tolist() == [0.00, 0.00, 0.85, 0.00, 0.02]
+    assert hi.tolist() == [0.05, 0.05, 0.98, 0.02, 0.10]
     mix = center_mix(ALL)
     assert np.isclose(sum(mix.values()), 1)
     assert all(BOUNDS[g][0] <= w <= BOUNDS[g][1] for g, w in mix.items())
@@ -36,7 +36,7 @@ def test_infeasible_bounds_raise():
 
 def test_vertex_mixes_are_feasible_extreme_points():
     V = vertex_mixes(ALL)
-    assert len(V) == 17
+    assert len(V) == 18
     lo, hi = bounds_arrays(ALL)
     for mix in V:
         w = np.array([mix[g] for g in ALL])

@@ -162,13 +162,14 @@ Initial weight bounds, which are judgment calls stated in the writeup:
 
 | Group | Min | Max |
 |---|---|---|
-| `riddler` | 0% | 20% |
-| `heuristics` | 0% | 15% |
-| `chatbots` | 70% | 95% |
-| `random` | 0% | 5% |
-| `counters` | 5% | 15% |
+| `riddler` | 0% | 5% |
+| `heuristics` | 0% | 5% |
+| `chatbots` | 85% | 98% |
+| `random` | 0% | 2% |
+| `counters` | 2% | 10% |
 
 Revised on 2026-10-06: chatbot answers make up 70-95% of every field, because nearly all applicants are expected to ask an LLM.
+Revised again on 2026-10-06 to the table above: chatbot answers make up 85-98% of every field, and Riddler entries get at most 5%, because Riddler Nation used plain scoring without the multipliers.
 Without chatbot answers these bounds cannot be met, so the pipeline stops with a clear error instead of running.
 The held-out run hides ChatGPT's answers, testing whether a pick tuned to Claude's answers carries over.
 
