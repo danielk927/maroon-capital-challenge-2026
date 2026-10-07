@@ -1,31 +1,31 @@
 {
   "pick": [
     1,
+    2,
     4,
-    6,
     1,
-    7,
-    28,
+    16,
+    29,
     3,
-    5,
+    4,
     33,
-    12
+    7
   ],
   "pick_vs_center_field": {
-    "win_rate": 0.8490128438860146,
-    "avg_points": 62.9530499538474
+    "win_rate": 0.9295312617157785,
+    "avg_points": 65.21473350418287
   },
   "pick_share_beaten": [
-    0.4527,
-    0.8953,
-    0.8558,
-    0.1251,
-    0.5519,
-    0.9451,
-    0.2988,
-    0.2482,
-    0.9558,
-    0.6642
+    0.4541,
+    0.811,
+    0.7737,
+    0.1157,
+    0.9126,
+    0.9705,
+    0.3246,
+    0.1971,
+    0.9831,
+    0.5831
   ],
   "pick_outcomes": [
     {
@@ -38,7 +38,31 @@
         10
       ],
       "score": 80.85,
-      "share": 0.1766569105691058
+      "share": 0.2084211682037769
+    },
+    {
+      "won": [
+        2,
+        3,
+        5,
+        6,
+        7,
+        9,
+        10
+      ],
+      "score": 69.3,
+      "share": 0.0884556487462108
+    },
+    {
+      "won": [
+        2,
+        3,
+        5,
+        6,
+        9
+      ],
+      "score": 50.82,
+      "share": 0.07629824223143424
     },
     {
       "won": [
@@ -51,350 +75,491 @@
         10
       ],
       "score": 59.4,
-      "share": 0.0752632175412663
+      "share": 0.05807004295339396
     },
     {
       "won": [
+        1,
         2,
         3,
-        6,
-        7,
-        9,
-        10
-      ],
-      "score": 61.05,
-      "share": 0.07400310421286031
-    },
-    {
-      "won": [
-        2,
-        3,
-        6,
-        9
-      ],
-      "score": 34.65,
-      "share": 0.04387553584626763
-    },
-    {
-      "won": [
-        2,
-        3,
-        6,
-        9,
-        10
-      ],
-      "score": 64.68,
-      "share": 0.042558774739262645
-    },
-    {
-      "won": [
-        2,
-        3,
+        4,
         5,
         6,
         9
       ],
-      "score": 50.82,
-      "share": 0.04129765952204979
+      "score": 62.37,
+      "share": 0.04631629122615337
+    },
+    {
+      "won": [
+        1,
+        2,
+        5,
+        6,
+        8,
+        9
+      ],
+      "score": 51.15,
+      "share": 0.04426236918495667
     }
   ],
   "bonus_rates": {
     "pick": {
-      "base_multiple_of_5": 0.5446946374312227,
-      "wins_6": 0.9450746653527136
+      "base_multiple_of_5": 0.5190056664203003,
+      "wins_6": 0.9704694024015332
     },
     "chatbot_mean": {
-      "base_multiple_of_5": 0.3106176045002873,
-      "wins_6": 0.5051826008047955
+      "base_multiple_of_5": 0.30738582430883576,
+      "wins_6": 0.4613552101074368
     }
   },
   "one_troop_moves": [
     {
       "from": 1,
-      "to": 7,
-      "win_rate": 0.8192103473762007,
-      "avg_points": 61.508550084749906
+      "to": 10,
+      "win_rate": 0.8571644333044117,
+      "avg_points": 63.48668834163482
     },
     {
       "from": 2,
       "to": 1,
-      "win_rate": 0.8522182803646213,
-      "avg_points": 57.16969990342446
+      "win_rate": 0.8677499169853353,
+      "avg_points": 56.440911895090906
     },
     {
       "from": 3,
-      "to": 1,
-      "win_rate": 0.8556364786072098,
-      "avg_points": 58.00941734762254
+      "to": 10,
+      "win_rate": 0.9042117784418946,
+      "avg_points": 64.26132331276713
     },
     {
       "from": 4,
       "to": 1,
-      "win_rate": 0.8521975199145928,
-      "avg_points": 55.62028776743036
+      "win_rate": 0.8828357273691309,
+      "avg_points": 56.43451522617481
     },
     {
       "from": 5,
-      "to": 1,
-      "win_rate": 0.8574527059209982,
-      "avg_points": 57.81974487049352
+      "to": 8,
+      "win_rate": 0.93193577342888,
+      "avg_points": 64.23383536081924
     },
     {
       "from": 6,
-      "to": 1,
-      "win_rate": 0.8558206619035883,
-      "avg_points": 56.56326158610493
+      "to": 10,
+      "win_rate": 0.9288195421875162,
+      "avg_points": 65.21970874910292
     },
     {
       "from": 7,
-      "to": 1,
-      "win_rate": 0.8552107087131474,
-      "avg_points": 55.42467957674301
+      "to": 10,
+      "win_rate": 0.9335963666356026,
+      "avg_points": 61.92174751073837
     },
     {
       "from": 8,
-      "to": 1,
-      "win_rate": 0.8553660179026028,
-      "avg_points": 58.008983497248884
+      "to": 10,
+      "win_rate": 0.9300768019537897,
+      "avg_points": 64.61716555416307
     },
     {
       "from": 9,
-      "to": 1,
-      "win_rate": 0.8582038268867532,
-      "avg_points": 55.811540603104184
+      "to": 7,
+      "win_rate": 0.931260494660282,
+      "avg_points": 62.40439439399297
     },
     {
       "from": 10,
-      "to": 1,
-      "win_rate": 0.8494126632175409,
-      "avg_points": 57.78036498168675
+      "to": 8,
+      "win_rate": 0.9276268517625881,
+      "avg_points": 64.48280534539457
     }
   ],
   "tournament_ranks": {
-    "median_share_above_wins": 0.08394277478246945,
-    "max_share_above_wins": 0.17592592592592593,
-    "first_by_wins": 0.002,
+    "median_share_above_wins": 0.034549071618037136,
+    "max_share_above_wins": 0.1794871794871795,
+    "first_by_wins": 0.035,
     "median_share_above_points": 0.0,
-    "max_share_above_points": 0.02654867256637168,
-    "first_by_points": 0.787
+    "max_share_above_points": 0.03418803418803419,
+    "first_by_points": 0.722
   },
   "finalists": [
     {
       "allocation": [
         1,
-        4,
-        6,
-        1,
-        7,
-        28,
-        3,
-        5,
-        33,
-        12
-      ],
-      "worst_case_rating": 0.5739911003205959,
-      "top_quartile_wins": 1.0,
-      "top_quartile_points": 1.0,
-      "top_quartile_both": 1.0,
-      "win_rate_by_group": {
-        "riddler": 0.7018,
-        "heuristics": 0.6659,
-        "chatbots": 0.885,
-        "random": 0.729,
-        "counters": 0.8667
-      },
-      "avg_points_by_group": {
-        "riddler": 49.3,
-        "heuristics": 61.48,
-        "chatbots": 66.9,
-        "random": 51.76,
-        "counters": 47.96
-      }
-    },
-    {
-      "allocation": [
-        1,
-        4,
-        6,
         2,
-        5,
-        28,
         4,
-        5,
+        1,
+        16,
+        29,
+        3,
+        4,
         33,
-        12
+        7
       ],
-      "worst_case_rating": 0.573816204350645,
+      "worst_case_rating": 0.5979864797498409,
       "top_quartile_wins": 1.0,
       "top_quartile_points": 1.0,
       "top_quartile_both": 1.0,
       "win_rate_by_group": {
-        "riddler": 0.6927,
-        "heuristics": 0.6591,
-        "chatbots": 0.885,
-        "random": 0.747,
-        "counters": 0.8767
+        "riddler": 0.7317,
+        "heuristics": 0.7659,
+        "chatbots": 0.985,
+        "random": 0.675,
+        "counters": 0.2767
       },
       "avg_points_by_group": {
-        "riddler": 49.37,
-        "heuristics": 61.68,
-        "chatbots": 66.82,
-        "random": 51.94,
-        "counters": 48.43
+        "riddler": 50.83,
+        "heuristics": 63.26,
+        "chatbots": 68.54,
+        "random": 49.61,
+        "counters": 23.94
       }
     },
     {
       "allocation": [
         1,
+        2,
         4,
-        6,
         1,
-        7,
-        28,
-        4,
-        4,
-        33,
-        12
-      ],
-      "worst_case_rating": 0.5737469649325343,
-      "top_quartile_wins": 1.0,
-      "top_quartile_points": 1.0,
-      "top_quartile_both": 1.0,
-      "win_rate_by_group": {
-        "riddler": 0.6982,
-        "heuristics": 0.6659,
-        "chatbots": 0.885,
-        "random": 0.732,
-        "counters": 0.8767
-      },
-      "avg_points_by_group": {
-        "riddler": 49.58,
-        "heuristics": 61.76,
-        "chatbots": 66.9,
-        "random": 51.46,
-        "counters": 46.37
-      }
-    },
-    {
-      "allocation": [
-        1,
-        4,
-        6,
-        1,
-        6,
-        28,
-        4,
-        5,
-        33,
-        12
-      ],
-      "worst_case_rating": 0.5734750425483273,
-      "top_quartile_wins": 1.0,
-      "top_quartile_points": 1.0,
-      "top_quartile_both": 1.0,
-      "win_rate_by_group": {
-        "riddler": 0.7029,
-        "heuristics": 0.6591,
-        "chatbots": 0.885,
-        "random": 0.741,
-        "counters": 0.9
-      },
-      "avg_points_by_group": {
-        "riddler": 49.48,
-        "heuristics": 61.76,
-        "chatbots": 66.32,
-        "random": 52.28,
-        "counters": 50.96
-      }
-    },
-    {
-      "allocation": [
-        1,
-        4,
-        6,
-        1,
-        6,
+        16,
         28,
         3,
-        5,
-        34,
-        12
+        3,
+        33,
+        9
       ],
-      "worst_case_rating": 0.5723308846862671,
+      "worst_case_rating": 0.5979797909617091,
       "top_quartile_wins": 1.0,
       "top_quartile_points": 1.0,
       "top_quartile_both": 1.0,
       "win_rate_by_group": {
-        "riddler": 0.7022,
-        "heuristics": 0.6591,
-        "chatbots": 0.885,
-        "random": 0.72,
-        "counters": 0.9
+        "riddler": 0.7335,
+        "heuristics": 0.7659,
+        "chatbots": 0.985,
+        "random": 0.683,
+        "counters": 0.2567
       },
       "avg_points_by_group": {
-        "riddler": 49.42,
-        "heuristics": 61.7,
-        "chatbots": 66.32,
-        "random": 51.51,
-        "counters": 49.12
+        "riddler": 51.09,
+        "heuristics": 63.26,
+        "chatbots": 68.46,
+        "random": 50.44,
+        "counters": 25.14
+      }
+    },
+    {
+      "allocation": [
+        2,
+        1,
+        6,
+        12,
+        2,
+        1,
+        2,
+        31,
+        34,
+        9
+      ],
+      "worst_case_rating": 0.597275847636238,
+      "top_quartile_wins": 1.0,
+      "top_quartile_points": 1.0,
+      "top_quartile_both": 1.0,
+      "win_rate_by_group": {
+        "riddler": 0.6012,
+        "heuristics": 0.7432,
+        "chatbots": 1.0,
+        "random": 0.602,
+        "counters": 0.6133
+      },
+      "avg_points_by_group": {
+        "riddler": 47.19,
+        "heuristics": 60.83,
+        "chatbots": 64.05,
+        "random": 44.18,
+        "counters": 45.71
+      }
+    },
+    {
+      "allocation": [
+        1,
+        2,
+        4,
+        1,
+        17,
+        28,
+        3,
+        4,
+        33,
+        7
+      ],
+      "worst_case_rating": 0.5969495186393261,
+      "top_quartile_wins": 1.0,
+      "top_quartile_points": 1.0,
+      "top_quartile_both": 1.0,
+      "win_rate_by_group": {
+        "riddler": 0.7365,
+        "heuristics": 0.7886,
+        "chatbots": 0.985,
+        "random": 0.682,
+        "counters": 0.1733
+      },
+      "avg_points_by_group": {
+        "riddler": 51.38,
+        "heuristics": 63.71,
+        "chatbots": 69.12,
+        "random": 49.88,
+        "counters": 21.31
+      }
+    },
+    {
+      "allocation": [
+        3,
+        4,
+        5,
+        13,
+        5,
+        3,
+        25,
+        28,
+        5,
+        9
+      ],
+      "worst_case_rating": 0.5967028837128738,
+      "top_quartile_wins": 1.0,
+      "top_quartile_points": 1.0,
+      "top_quartile_both": 1.0,
+      "win_rate_by_group": {
+        "riddler": 0.643,
+        "heuristics": 0.7432,
+        "chatbots": 0.9,
+        "random": 0.685,
+        "counters": 0.8467
+      },
+      "avg_points_by_group": {
+        "riddler": 48.39,
+        "heuristics": 65.35,
+        "chatbots": 66.47,
+        "random": 47.28,
+        "counters": 50.08
+      }
+    },
+    {
+      "allocation": [
+        1,
+        2,
+        4,
+        1,
+        15,
+        28,
+        3,
+        4,
+        33,
+        9
+      ],
+      "worst_case_rating": 0.5965799979790417,
+      "top_quartile_wins": 1.0,
+      "top_quartile_points": 1.0,
+      "top_quartile_both": 1.0,
+      "win_rate_by_group": {
+        "riddler": 0.7385,
+        "heuristics": 0.7659,
+        "chatbots": 0.985,
+        "random": 0.717,
+        "counters": 0.3033
+      },
+      "avg_points_by_group": {
+        "riddler": 50.79,
+        "heuristics": 63.07,
+        "chatbots": 67.89,
+        "random": 51.25,
+        "counters": 25.14
+      }
+    },
+    {
+      "allocation": [
+        2,
+        1,
+        6,
+        12,
+        2,
+        1,
+        2,
+        32,
+        33,
+        9
+      ],
+      "worst_case_rating": 0.5959665030100586,
+      "top_quartile_wins": 1.0,
+      "top_quartile_points": 1.0,
+      "top_quartile_both": 1.0,
+      "win_rate_by_group": {
+        "riddler": 0.6063,
+        "heuristics": 0.7432,
+        "chatbots": 1.0,
+        "random": 0.599,
+        "counters": 0.52
+      },
+      "avg_points_by_group": {
+        "riddler": 47.43,
+        "heuristics": 60.6,
+        "chatbots": 64.7,
+        "random": 44.06,
+        "counters": 41.81
+      }
+    },
+    {
+      "allocation": [
+        3,
+        4,
+        6,
+        13,
+        5,
+        3,
+        26,
+        28,
+        5,
+        7
+      ],
+      "worst_case_rating": 0.5956413991889989,
+      "top_quartile_wins": 1.0,
+      "top_quartile_points": 1.0,
+      "top_quartile_both": 1.0,
+      "win_rate_by_group": {
+        "riddler": 0.6501,
+        "heuristics": 0.75,
+        "chatbots": 0.9,
+        "random": 0.651,
+        "counters": 0.7333
+      },
+      "avg_points_by_group": {
+        "riddler": 49.51,
+        "heuristics": 66.82,
+        "chatbots": 66.71,
+        "random": 46.49,
+        "counters": 49.75
+      }
+    },
+    {
+      "allocation": [
+        3,
+        4,
+        6,
+        13,
+        5,
+        3,
+        25,
+        28,
+        3,
+        10
+      ],
+      "worst_case_rating": 0.5955013260653879,
+      "top_quartile_wins": 1.0,
+      "top_quartile_points": 1.0,
+      "top_quartile_both": 1.0,
+      "win_rate_by_group": {
+        "riddler": 0.607,
+        "heuristics": 0.7364,
+        "chatbots": 0.9,
+        "random": 0.663,
+        "counters": 0.7567
+      },
+      "avg_points_by_group": {
+        "riddler": 47.9,
+        "heuristics": 64.96,
+        "chatbots": 67.12,
+        "random": 46.04,
+        "counters": 46.28
+      }
+    },
+    {
+      "allocation": [
+        3,
+        4,
+        6,
+        13,
+        5,
+        3,
+        25,
+        28,
+        6,
+        7
+      ],
+      "worst_case_rating": 0.595273877609859,
+      "top_quartile_wins": 1.0,
+      "top_quartile_points": 1.0,
+      "top_quartile_both": 1.0,
+      "win_rate_by_group": {
+        "riddler": 0.6531,
+        "heuristics": 0.7432,
+        "chatbots": 0.9,
+        "random": 0.677,
+        "counters": 0.7567
+      },
+      "avg_points_by_group": {
+        "riddler": 49.31,
+        "heuristics": 65.73,
+        "chatbots": 66.63,
+        "random": 47.16,
+        "counters": 48.47
       }
     }
   ],
   "heldout": {
     "pick": [
       2,
+      3,
+      3,
+      6,
+      14,
+      28,
+      3,
       4,
-      4,
-      6,
-      2,
-      30,
-      6,
-      6,
       31,
-      9
+      6
     ],
     "same_as_final_pick": false,
     "riddler": {
       "seen": {
-        "win_rate": 0.6805711086226204,
-        "avg_points": 47.74526315789474,
-        "rating": 0.5281850551294713
+        "win_rate": 0.7371220604703248,
+        "avg_points": 50.423524636058225,
+        "rating": 0.5670007179016647
       },
       "round_4": {
-        "win_rate": 0.6396588486140724,
-        "avg_points": 45.20279317697228,
-        "rating": 0.49772314007630925
+        "win_rate": 0.7270788912579957,
+        "avg_points": 48.38746268656717,
+        "rating": 0.5539662960287113
       }
     },
     "chatbots": {
       "seen": {
-        "win_rate": 0.9,
-        "avg_points": 70.796,
-        "rating": 0.7286147186147187
+        "win_rate": 1.0,
+        "avg_points": 76.87899999999999,
+        "rating": 0.8025541125541125
       },
       "chatgpt": {
-        "win_rate": 0.9,
-        "avg_points": 57.497,
-        "rating": 0.6762770562770563
+        "win_rate": 0.8,
+        "avg_points": 58.56399999999999,
+        "rating": 0.6304761904761904
       }
     }
   },
   "counter_check": {
     "counter": [
-      1,
-      5,
-      9,
+      0,
       4,
-      8,
-      32,
-      7,
+      3,
+      4,
+      22,
+      0,
       12,
-      9,
-      13
+      10,
+      36,
+      9
     ],
     "pool_share_within_10": 0.0,
     "pick_win_rate_vs_counter_family": 0.0,
-    "pick_avg_points_vs_counter_family": 11.470588235294118
+    "pick_avg_points_vs_counter_family": 14.85
   },
   "chatbot_answers": {
     "kept": {
@@ -418,42 +583,6 @@
       7
     ],
     [
-      3,
-      2,
-      2,
-      6,
-      16,
-      28,
-      3,
-      3,
-      31,
-      6
-    ],
-    [
-      3,
-      3,
-      4,
-      13,
-      17,
-      2,
-      22,
-      27,
-      3,
-      6
-    ],
-    [
-      0,
-      4,
-      4,
-      14,
-      5,
-      2,
-      26,
-      3,
-      33,
-      9
-    ],
-    [
       0,
       1,
       5,
@@ -467,291 +596,75 @@
     ],
     [
       1,
-      2,
-      4,
       1,
-      16,
+      5,
+      10,
+      17,
       28,
-      3,
+      25,
       4,
-      33,
-      8
-    ],
-    [
-      0,
-      4,
-      5,
-      14,
       2,
-      2,
-      26,
-      5,
-      34,
-      8
+      7
     ],
     [
       1,
+      3,
       4,
       6,
-      1,
       17,
-      3,
-      27,
       28,
-      5,
-      8
-    ],
-    [
       3,
-      3,
-      4,
-      9,
-      17,
-      3,
-      22,
       27,
-      3,
+      2,
       9
     ],
     [
       1,
-      1,
+      2,
       5,
-      10,
-      7,
-      29,
-      27,
-      6,
-      5,
-      9
-    ],
-    [
-      0,
-      4,
-      5,
+      11,
       14,
-      2,
-      2,
-      27,
-      2,
-      34,
-      10
-    ],
-    [
-      0,
-      2,
-      4,
-      15,
-      2,
-      2,
       28,
-      2,
-      35,
-      10
-    ],
-    [
-      1,
-      1,
-      5,
-      10,
-      5,
-      28,
-      27,
-      6,
-      7,
-      10
-    ],
-    [
-      1,
-      1,
-      7,
-      6,
-      5,
-      2,
-      3,
-      31,
-      34,
-      10
-    ],
-    [
-      2,
       3,
       4,
-      6,
-      17,
-      3,
-      22,
-      28,
-      6,
-      9
-    ],
-    [
-      0,
       2,
-      2,
-      14,
-      4,
-      3,
-      27,
-      3,
-      34,
-      11
-    ],
-    [
-      1,
-      2,
-      4,
-      1,
-      16,
-      29,
-      4,
-      3,
-      29,
-      11
-    ],
-    [
-      1,
-      1,
-      6,
-      6,
-      5,
-      3,
-      3,
-      31,
-      34,
-      10
-    ],
-    [
-      1,
-      1,
-      5,
-      10,
-      5,
-      29,
-      28,
-      4,
-      7,
-      10
-    ],
-    [
-      2,
-      2,
-      5,
-      8,
-      18,
-      3,
-      22,
-      28,
-      2,
-      10
-    ],
-    [
-      0,
-      2,
-      2,
-      14,
-      3,
-      3,
-      27,
-      4,
-      34,
-      11
-    ],
-    [
-      1,
-      1,
-      5,
-      10,
-      7,
-      29,
-      27,
-      4,
-      5,
-      11
-    ],
-    [
-      1,
-      1,
-      5,
-      10,
-      6,
-      30,
-      28,
-      2,
-      6,
-      11
-    ],
-    [
-      1,
-      4,
-      6,
-      1,
-      17,
-      4,
-      22,
-      27,
-      7,
-      11
-    ],
-    [
-      3,
-      4,
-      6,
-      2,
-      8,
-      4,
-      4,
-      4,
-      35,
       30
     ],
     [
-      0,
       2,
-      2,
-      14,
-      2,
-      2,
-      28,
       3,
-      35,
-      12
-    ],
-    [
-      1,
-      1,
-      5,
-      10,
-      6,
-      28,
+      4,
+      12,
+      17,
+      2,
+      22,
       27,
-      4,
-      7,
-      11
+      3,
+      8
     ],
     [
       1,
       1,
-      7,
-      11,
       5,
-      30,
-      28,
-      4,
-      2,
-      11
-    ],
-    [
-      1,
-      1,
-      7,
       10,
-      2,
-      28,
-      28,
+      14,
+      29,
+      26,
       5,
-      7,
-      11
+      3,
+      6
+    ],
+    [
+      1,
+      1,
+      5,
+      14,
+      8,
+      29,
+      26,
+      5,
+      2,
+      9
     ],
     [
       1,
@@ -759,11 +672,263 @@
       5,
       12,
       18,
-      30,
+      29,
       4,
+      5,
+      2,
+      22
+    ],
+    [
+      1,
+      4,
+      5,
+      6,
+      17,
+      29,
+      4,
+      23,
+      2,
+      9
+    ],
+    [
+      2,
+      2,
+      5,
+      13,
+      17,
+      2,
+      21,
+      28,
+      3,
+      7
+    ],
+    [
+      1,
+      1,
+      5,
+      10,
+      5,
+      30,
+      27,
+      6,
+      4,
+      11
+    ],
+    [
+      3,
+      4,
+      6,
+      4,
+      5,
+      28,
+      5,
+      31,
+      4,
+      10
+    ],
+    [
+      3,
+      4,
+      5,
+      5,
+      7,
+      2,
+      5,
+      6,
+      33,
+      30
+    ],
+    [
+      1,
+      2,
+      5,
+      12,
+      17,
+      30,
+      3,
+      6,
+      2,
+      22
+    ],
+    [
+      2,
+      2,
+      5,
+      13,
+      17,
+      2,
+      22,
+      28,
+      4,
+      5
+    ],
+    [
+      2,
+      2,
+      5,
+      12,
+      17,
+      2,
+      22,
+      27,
+      3,
+      8
+    ],
+    [
+      1,
+      1,
+      8,
+      6,
+      2,
+      2,
+      5,
+      31,
+      33,
+      11
+    ],
+    [
+      1,
+      2,
+      4,
+      1,
+      15,
+      29,
+      3,
+      4,
+      33,
+      8
+    ],
+    [
+      1,
+      1,
+      5,
+      10,
+      5,
+      30,
+      26,
+      7,
+      4,
+      11
+    ],
+    [
+      2,
+      2,
+      5,
+      13,
+      17,
+      2,
+      22,
+      28,
+      4,
+      5
+    ],
+    [
+      1,
+      2,
+      4,
+      1,
+      15,
+      28,
+      3,
+      4,
+      33,
+      9
+    ],
+    [
+      1,
+      1,
+      5,
+      10,
+      5,
+      30,
+      26,
+      8,
+      5,
+      9
+    ],
+    [
+      2,
+      4,
+      4,
+      6,
+      5,
+      30,
+      3,
+      32,
+      5,
+      9
+    ],
+    [
+      1,
+      2,
+      5,
+      12,
+      18,
+      31,
+      3,
       4,
       2,
       22
+    ],
+    [
+      0,
+      2,
+      2,
+      14,
+      7,
+      2,
+      26,
+      3,
+      34,
+      10
+    ],
+    [
+      2,
+      2,
+      5,
+      13,
+      17,
+      2,
+      22,
+      28,
+      3,
+      6
+    ],
+    [
+      1,
+      2,
+      4,
+      1,
+      15,
+      28,
+      3,
+      4,
+      33,
+      9
+    ],
+    [
+      4,
+      4,
+      5,
+      2,
+      7,
+      3,
+      4,
+      8,
+      33,
+      30
+    ],
+    [
+      1,
+      1,
+      5,
+      10,
+      6,
+      31,
+      25,
+      7,
+      5,
+      9
     ]
   ],
   "group_sizes": {
@@ -776,23 +941,23 @@
   "bounds": {
     "riddler": [
       0.0,
-      0.2
+      0.05
     ],
     "heuristics": [
       0.0,
-      0.15
+      0.05
     ],
     "chatbots": [
-      0.7,
-      0.95
+      0.85,
+      0.98
     ],
     "random": [
       0.0,
-      0.05
+      0.02
     ],
     "counters": [
-      0.05,
-      0.15
+      0.02,
+      0.1
     ]
   },
   "lam_range": [

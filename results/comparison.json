@@ -1,0 +1,144 @@
+{
+  "picks": {
+    "current": [
+      1,
+      2,
+      4,
+      1,
+      16,
+      29,
+      3,
+      4,
+      33,
+      7
+    ],
+    "earlier": [
+      1,
+      4,
+      6,
+      1,
+      7,
+      28,
+      3,
+      5,
+      33,
+      12
+    ]
+  },
+  "win_rate_by_group": {
+    "current": {
+      "riddler": 0.7317,
+      "heuristics": 0.7659,
+      "chatbots": 0.985,
+      "random": 0.675,
+      "counters": 0.2767
+    },
+    "earlier": {
+      "riddler": 0.7018,
+      "heuristics": 0.6659,
+      "chatbots": 0.885,
+      "random": 0.729,
+      "counters": 0.5733
+    }
+  },
+  "chatbot_answers_beaten": {
+    "current": {
+      "claude": 10,
+      "chatgpt": 10
+    },
+    "earlier": {
+      "claude": 9,
+      "chatgpt": 9
+    }
+  },
+  "by_bounds": {
+    "current": {
+      "bounds": {
+        "riddler": [
+          0.0,
+          0.05
+        ],
+        "heuristics": [
+          0.0,
+          0.05
+        ],
+        "chatbots": [
+          0.85,
+          0.98
+        ],
+        "random": [
+          0.0,
+          0.02
+        ],
+        "counters": [
+          0.02,
+          0.1
+        ]
+      },
+      "current": {
+        "worst_case_rating": 0.5979864797498409,
+        "center_win_rate": 0.9295312617157792,
+        "center_avg_points": 65.21473350418286,
+        "top_quartile_both": 1.0,
+        "median_share_above_wins": 0.033785849691188155,
+        "median_share_above_points": 0.0,
+        "max_share_above_wins": 0.14173228346456693,
+        "share_below_cutoff_wins": 1.0
+      },
+      "earlier": {
+        "worst_case_rating": 0.5846950032875475,
+        "center_win_rate": 0.8557078526516491,
+        "center_avg_points": 64.60565284831345,
+        "top_quartile_both": 1.0,
+        "median_share_above_wins": 0.07731958762886598,
+        "median_share_above_points": 0.0,
+        "max_share_above_wins": 0.1941747572815534,
+        "share_below_cutoff_wins": 1.0
+      }
+    },
+    "earlier": {
+      "bounds": {
+        "riddler": [
+          0.0,
+          0.2
+        ],
+        "heuristics": [
+          0.0,
+          0.15
+        ],
+        "chatbots": [
+          0.7,
+          0.95
+        ],
+        "random": [
+          0.0,
+          0.05
+        ],
+        "counters": [
+          0.05,
+          0.15
+        ]
+      },
+      "current": {
+        "worst_case_rating": 0.5585411928300483,
+        "center_win_rate": 0.8780252114642352,
+        "center_avg_points": 62.22769683748052,
+        "top_quartile_both": 1.0,
+        "median_share_above_wins": 0.05738146551724138,
+        "median_share_above_points": 0.0,
+        "max_share_above_wins": 0.15228426395939088,
+        "share_below_cutoff_wins": 1.0
+      },
+      "earlier": {
+        "worst_case_rating": 0.5577382123419817,
+        "center_win_rate": 0.8229387698119399,
+        "center_avg_points": 62.19830921310668,
+        "top_quartile_both": 1.0,
+        "median_share_above_wins": 0.10256410256410256,
+        "median_share_above_points": 0.0,
+        "max_share_above_wins": 0.21495327102803738,
+        "share_below_cutoff_wins": 1.0
+      }
+    }
+  }
+}
