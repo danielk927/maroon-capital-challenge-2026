@@ -1,6 +1,6 @@
 """Static figures for the writeup: light surface, validated palette, one axis per chart.
 
-Also the descriptive statistics the writeup cites and the CSV data behind its LaTeX figures.
+Also descriptive statistics of the pick, and the data behind the figures as CSV files.
 """
 
 import csv
@@ -180,7 +180,7 @@ def write_figure_data(
     above_wins: np.ndarray,
     above_points: np.ndarray,
 ) -> None:
-    """The CSV files behind the LaTeX writeup's figures: allocation, chatbot bids, candidates, and tournament ranks."""
+    """The data behind the figures as CSV files: allocation, chatbot bids, candidates, and tournament ranks."""
     out_dir.mkdir(parents=True, exist_ok=True)
     _write_csv(
         out_dir / "allocation.csv",
