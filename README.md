@@ -94,7 +94,7 @@ Code: [`src/blotto/robust.py`](src/blotto/robust.py).
 
 The field's makeup is a guess, as well as how wins and points will be weighted. Therefore, the pick has to do well even when those guesses are off.
 
-I ran the search under many versions of the field: the middle-of-the-range mix, every extreme mix (ex. chatbots at 98% and everything else at its minimum), etc. Add two searches aimed directly at the worst case, plus the 30 counters. Keep the best 300.
+I ran the search under many versions of the field: the middle-of-the-range mix, every extreme mix (ex. chatbots at 98% and everything else at its minimum), etc. 
 I also imagined a pessimist who gets to choose the field's makeup and the wins/points weighting, to make each candidate look as bad as possible. Each candidate is scored by that worst result, and the pick is the one whose worst result is best.
 Essentially, the pessimist gaveve every group its minimum share, then piled the leftover share onto the groups the candidate struggles against most. The worst weighting is always one of the two extremes (0.25 or 0.75).
 Everything within 0.005 of the best worst-case score (at most 10 candidates) plays 1,000 mock tournaments. The one that makes the top quartile most often wins, and the worst-case score breaks ties.
