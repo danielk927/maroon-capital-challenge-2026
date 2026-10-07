@@ -71,34 +71,33 @@ Dividing by the maximum score puts points on the same 0 to 1 scale as the win ra
 
 Code: [`src/blotto/search.py`](src/blotto/search.py).
 
-There are about 4.3 trillion ways to split 100 troops across 10 battlefields, which is far too many to check.
-Simulated annealing runs 32 chains in parallel from random starts, each for 3,000 steps that move 1 to 5 troops between two battlefields.
-It always keeps improvements and sometimes keeps a worse move while the temperature is high, so chains can escape dead ends.
-A steepest-ascent polish then tries all 270 shifts of 1 to 3 troops and takes the best, repeating until no small change helps.
-For speed the searches rate against a sample of 2,000 opponents, stratified by group, and the candidates are re-rated on the full pool of 10,208 entries.
+There are about 4.3 trillion ways to split 100 troops across 10 battlefields, which is impractical to go through all choices.
+Each step, move a few troops (1 to 5) from one battlefield to another. If the score goes up, keep the change.
+Early on, it's good to sometimes keep a change that makes things a little worse. That stops the search from settling on the first decent answer it finds. Over 3,000 steps the search gets pickier, until it only accepts improvements. This method is called simulated annealing.
+Once a search settles, try every small tweak, meaning every way to move 1 to 3 troops between any two battlefields (270 options). Keep the best tweak and repeat until no tweak helps, guaranteeing that no small change can improve the result.
 
 ### 6. Simulate strategic applicants
 
 Code: [`src/blotto/counters.py`](src/blotto/counters.py).
 
-Some applicants will try to beat the obvious answers.
-The counter loop runs fictitious play, where it searches for the best responses to the current pool, adds the five best that differ by at least 6 troops, and repeats for six rounds.
-The resulting 30 counters make sure the pick also faces people who try to out-think the chatbots.
+Some applicants will try to beat the obvious answers. To model those people, this code acts as "the next applicant":
+
+1. Find the 5 allocations that do best against the current field.
+2. Add them to the field as new opponents.
+3. Repeat, 6 rounds in all.
+
+Each round's newcomers try to beat everyone before them, including the previous round's smart players. The result is 30 "counter" opponents. Each is at least 6 troops different from the others, preventing them from being near-copies.
 
 ### 7. Choose the pick that survives the worst case
 
 Code: [`src/blotto/robust.py`](src/blotto/robust.py).
 
-Candidates come from searches under the center mix and under every extreme mix of the ranges, for λ = 0.25, 0.5 and 0.75, plus two searches that maximize the worst case below, plus the counters, and the 300 best distinct candidates move on.
+The field's makeup is a guess, as well as how wins and points will be weighted. Therefore, the pick has to do well even when those guesses are off.
 
-A pessimist then chooses the group shares inside the ranges and λ inside [0.25, 0.75] to make each candidate look as bad as possible, and the pick is the candidate whose worst case is best.
-The rating is linear in the shares, so the pessimist's best move is a greedy fill: give every group its minimum, then pour the rest into the groups where the candidate does worst.
-The worst λ is always one of the two endpoints.
-
-The candidates within 0.005 of the best worst case, up to ten, become finalists, and each plays 1,000 mock tournaments.
-The pick has the best top-quartile rate, with the worst case breaking ties.
-This time ten finalists all made the top quartile in every tournament, and they came in three shapes: the pick and three close variants, two that concede battlefield 6 for 8 and 9, and four that buy 7 and 8 instead of 6 and 9.
-The pick's shape had the best worst case (0.598) and beat more Riddler entries than the other shapes.
+I ran the search under many versions of the field: the middle-of-the-range mix, every extreme mix (ex. chatbots at 98% and everything else at its minimum), etc. Add two searches aimed directly at the worst case, plus the 30 counters. Keep the best 300.
+I also imagined a pessimist who gets to choose the field's makeup and the wins/points weighting, to make each candidate look as bad as possible. Each candidate is scored by that worst result, and the pick is the one whose worst result is best.
+Essentially, the pessimist gaveve every group its minimum share, then piled the leftover share onto the groups the candidate struggles against most. The worst weighting is always one of the two extremes (0.25 or 0.75).
+Everything within 0.005 of the best worst-case score (at most 10 candidates) plays 1,000 mock tournaments. The one that makes the top quartile most often wins, and the worst-case score breaks ties.
 
 ### 8. Validate
 
@@ -113,7 +112,7 @@ Code: [`src/blotto/validate.py`](src/blotto/validate.py).
   It beat 80% of the unseen ChatGPT answers, against 100% of the Claude answers it trained on, so expect some overfitting to the collected answers.
 - **Counter check.**
   The best response to the pick alone, `[0, 4, 3, 4, 22, 0, 12, 10, 36, 9]`, beats it by giving up battlefields 1 and 6 and outbidding it almost everywhere else.
-  No entry in the simulated field lies within 10 troops of that counter, so beating the pick this way takes someone who targets its exact numbers.
+  No entry in the simulated field lies within 10 troops of that counter, so beating the pick this way takes someone who targets its exact numbers, which I thought would probably be highly unlikely. 
 
 ### Why the pick works
 
