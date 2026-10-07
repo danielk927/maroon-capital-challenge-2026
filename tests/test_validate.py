@@ -45,6 +45,19 @@ def test_mock_tournaments_dominated_finalist_is_never_top():
     assert (out["share_above_wins"] == 1).all() and (out["share_above_points"] == 1).all()
 
 
+def test_mock_tournaments_draw_the_field_from_the_given_bounds():
+    # The finalist beats WEAK and loses to STRONG; the bounds decide which one fills the field.
+    finalist = np.array([[10] * 10])  # beats WEAK 89.1 to 1, loses to STRONG 31.5 to 92.4
+    groups = {**crowd_of(WEAK), "riddler": Group(STRONG, np.array([1.0]))}
+    all_riddler = {g: (1.0, 1.0) if g == "riddler" else (0.0, 0.0) for g in NAMES}
+    no_riddler = {g: (0.0, 0.0) if g == "riddler" else (0.25, 0.25) for g in NAMES}
+    rng = np.random.default_rng(0)
+    strong_field = mock_tournaments(finalist, groups, NAMES, rng, n=3, size_range=(10, 12), bounds=all_riddler)
+    weak_field = mock_tournaments(finalist, groups, NAMES, rng, n=3, size_range=(10, 12), bounds=no_riddler)
+    assert strong_field["top_quartile_wins"].tolist() == [0.0]
+    assert weak_field["top_quartile_wins"].tolist() == [1.0]
+
+
 def test_heldout_report_structure_and_values():
     pick = STRONG[0]
     seen = Field(np.array([[10] * 10]), np.array([1.0]))

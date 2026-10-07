@@ -51,14 +51,15 @@ def mock_tournaments(
     rng: np.random.Generator,
     n: int = 1000,
     size_range: tuple[int, int] = (100, 300),
+    bounds: Mapping[str, tuple[float, float]] = BOUNDS,
 ) -> dict[str, np.ndarray]:
-    """Play each finalist into n random realistic fields and record where it ranks on wins and on points."""
+    """Play each finalist into n random fields, with mixes drawn within bounds, and record its rank on wins and points."""
     finalists = np.atleast_2d(np.asarray(finalists, dtype=np.int64))
     above_wins = np.empty((n, len(finalists)))
     above_points = np.empty((n, len(finalists)))
     for t in range(n):
         size = int(rng.integers(size_range[0], size_range[1] + 1))
-        field = _draw_field(groups, names, sample_mix(names, rng), size, rng)
+        field = _draw_field(groups, names, sample_mix(names, rng, bounds), size, rng)
         mine, theirs = play(field, field)
         field_wins = (mine > theirs).sum(axis=1)
         field_points = mine.sum(axis=1)
