@@ -42,7 +42,7 @@ Each group gets a range for its share of the field instead of a single number, b
 | Group | Who it represents | Source | Share of the field |
 |---|---|---|---|
 | Chatbot answers | Applicants who ask an AI | 20 answers collected by hand, 10 from Claude and 10 from ChatGPT, each from a fresh chat with the problem pasted verbatim | 85-98% |
-| Riddler entries | People playing on instinct | 4,510 submissions to FiveThirtyEight's Battle for Riddler Nation, the same board without the multipliers | 0-5% |
+| Riddler entries | People playing on instinct | 4,510 submissions to FiveThirtyEight's Battle for Riddler Nation, which is the same game but without the multipliers | 0-5% |
 | Rules of thumb | Someone who thinks for ten minutes | 44 generated allocations: even splits, value-proportional splits, all-in on the top k battlefields, blocks whose base is a multiple of 5 | 0-5% |
 | Random splits | Noise | 1,000 draws from a Dirichlet-multinomial | 0-2% |
 | Counters | Applicants who think a step ahead | 30 best responses from the counter loop below | 2-10% |
@@ -109,21 +109,11 @@ Code: [`src/blotto/validate.py`](src/blotto/validate.py).
   The pick finished in the top quartile by wins and by points in all 1,000.
   The median share of the field ranked above it by wins was 3.5%, and in 72% of tournaments no applicant scored more total points.
 - **Held-out data.**
-  A rerun that never saw ChatGPT's answers or Riddler round 4 chose `[2, 3, 3, 6, 14, 28, 3, 4, 31, 6]`, the same shape.
+  A rerun that never saw ChatGPT's answers or Riddler round 4 chose `[2, 3, 3, 6, 14, 28, 3, 4, 31, 6]`.
   It beat 80% of the unseen ChatGPT answers, against 100% of the Claude answers it trained on, so expect some overfitting to the collected answers.
 - **Counter check.**
   The best response to the pick alone, `[0, 4, 3, 4, 22, 0, 12, 10, 36, 9]`, beats it by giving up battlefields 1 and 6 and outbidding it almost everywhere else.
   No entry in the simulated field lies within 10 troops of that counter, so beating the pick this way takes someone who targets its exact numbers.
-
-### 9. How the pick changed
-
-The first full run used wider ranges: chatbots 70-95%, Riddler up to 20%, rules of thumb up to 15%, random up to 5%, and counters 5-15%.
-It chose `[1, 4, 6, 1, 7, 28, 3, 5, 33, 12]`, the same three pairs with more troops on battlefield 10 and fewer on 5.
-Because Riddler Nation used different rules, the second run narrowed the ranges to the ones in the table above and chose the current pick.
-
-[`scripts/compare_picks.py`](scripts/compare_picks.py) compares the two picks on the same simulated pool, under both sets of ranges, and writes [`results/comparison.json`](results/comparison.json).
-Under the old ranges, the current pick still makes the top quartile in all 1,000 mock tournaments, with a median of 5.7% of the field above it by wins against 10.3% for the earlier pick.
-The cost is robustness to strategic players: the current pick beats 28% of the counters, while the earlier pick beats 57%.
 
 ### Why the pick works
 
@@ -150,13 +140,8 @@ Moving that troop anywhere else lowers the win rate from 93.0% to 85.7% or less.
 
 ### Assumptions and limits
 
-- Battlefields sit on a line, so 1 and 10 are not adjacent; equal totals are a win for neither player; and total points means the sum of a player's own scores.
-- The chatbot share is the biggest judgment call.
-  The pick beats 98.5% of chatbot answers but only 28% of the counters, so a field with many applicants running their own optimization would hurt it.
-- The chatbot sample is small: 20 answers from two models and one prompt.
-- The mock tournaments draw from the same pool that produced the pick, so they are optimistic; the held-out run is the fairer estimate.
-
-The original design is in [`docs/specs/`](docs/specs/), and the build plan is in [`docs/plans/`](docs/plans/).
+- The chatbot weight was the biggest risk I made. The pick beats 98.5% of chatbot answers but only 28% of the counters, so a field with many applicants running their own optimization would hurt it.
+- The chatbot sample is small: 20 answers from two models and one prompt. This was due to token constrictions, as I only have so many tokens to spare for Astra. 
 
 ## Figures
 
