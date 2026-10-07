@@ -1,28 +1,21 @@
 # Maroon Capital Challenge 2026
 
-A computational strategy for the Maroon Capital 2026 challenge problem, a Colonel Blotto variant.
-Each player splits 100 troops across 10 battlefields worth 1 to 10 points.
-Bonus multipliers reward adjacent wins, base scores that are multiples of 5, and winning battlefield 6.
-The full problem statement is in [`docs/problem.md`](docs/problem.md).
+This is my write-up, hope you guys enjoy!
 
 ## Result
 
 The pick is `[1, 2, 4, 1, 16, 29, 3, 4, 33, 7]`.
 Against the simulated field it beats 93% of opponents, and it finishes in the top quartile by wins and by points in all 1,000 mock tournaments.
-It beats all 20 chatbot answers collected for the problem head to head.
+It beats all 20 chatbot answers collected, in which GPT-6 Astra (Medium) and Opus 5.5 (High) were used.
 The numbers for every finalist are in [`results/summary.json`](results/summary.json).
 
 ## How the pick was found
 
 ### 1. Treat it as a prediction problem
 
-Colonel Blotto has no allocation that wins against everything.
-Any allocation can be beaten by one that gives up a battlefield and outbids it by a few troops elsewhere.
-So the best submission depends on what the other applicants submit, and the pipeline works in three steps: model the field, search for the allocation that does best against it, and check that the answer survives if the model is wrong.
+This problem does not have a definitive answer that wins, since every answer will always have a counter.
+So I decided that the best submission depends on what the other applicants submit, and the pipeline works in three steps: model the field, search for the allocation that does best against it, and check that the answer doesn't do too poorly if the model is wrong.
 
-Two standard approaches were ruled out.
-A Nash equilibrium is a mixed strategy, but the challenge takes one fixed allocation into a field of people who do not play the equilibrium.
-Reinforcement learning fits sequential games; this game is a single move, and any allocation can be scored exactly against the whole field in milliseconds, so RL would be a slower, noisier optimizer of the same objective.
 
 ### 2. Work out what the scoring rewards
 
