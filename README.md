@@ -21,21 +21,16 @@ So I decided that the best submission depends on what the other applicants submi
 
 Code: [`src/blotto/scoring.py`](src/blotto/scoring.py).
 
-- Each player wins one of 2^10 = 1,024 sets of battlefields, so every score is precomputed in a lookup table.
-  The multipliers are 3/2, 7/5 and 11/10, so scores are stored as integers times 100 and ties compare exactly.
+- Each player wins one of 2^10 = 1,024 sets of battlefields. The multipliers are 3/2, 7/5 and 11/10, so scores are stored as integers times 100 and ties compare exactly.
   The maximum score is 127.05.
-- The multipliers compound.
-  A set in which every battlefield has a won neighbor, whose base is a multiple of 5, and which includes battlefield 6 scores 1.5 × 1.4 × 1.1 = 2.31 times its base.
+- The multipliers compound. A set in which every battlefield has a won neighbor, whose base is a multiple of 5, and which includes battlefield 6 scores 1.5 × 1.4 × 1.1 = 2.31 times its base.
 - Rule 2 depends only on values modulo 5.
-  Battlefields 5 and 10 never change it, and the pairs {1,4}, {2,3}, {6,9} and {7,8} cancel out.
 - Winning more can score less.
-  In 556 of the 5,120 ways to add one battlefield to a set, the score drops: {6,...,10} scores 92.4, but {1,6,...,10} scores 67.1.
-- A player can win a match while losing six battlefields: 26 sets of four outscore the other six, for example {2,6,8,9} beats its complement 51.59 to 50.4.
+- A player can win a match while losing the majority (six) battlefields
 
-These facts point to one target.
-The pairs {2,3}, {5,6} and {9,10} have values summing to 35, so winning all six fires every multiplier: 35 × 2.31 = 80.85, 64% of the maximum from 35 of the board's 55 points.
-Losing 5 or 10 keeps the base a multiple of 5, so the fallbacks stay strong: {2,3,6,9,10} scores 64.68 and {2,3,5,6,9} scores 50.82.
-The search found the final allocation on its own; this reading explains why it works.
+
+The pairs {2,3}, {5,6} and {9,10} have values summing to 35, and winning all 6 battlefield creates 35 * 2.31 = 80.85, which is ~64% of the maximum 127.05 when you win all 10 battlefields.
+Less emphasis can be put on battlefields 5 and 10, because the base stays a multiple of 5: {2, 3, 6, 9, 10} still scores 64.68 and {2, 3, 5, 6, 9} scores 50.82.
 
 ### 3. Model the other applicants
 
@@ -52,10 +47,9 @@ Each group gets a range for its share of the field instead of a single number, b
 | Random splits | Noise | 1,000 draws from a Dirichlet-multinomial | 0-2% |
 | Counters | Applicants who think a step ahead | 30 best responses from the counter loop below | 2-10% |
 
-Chatbot answers get most of the weight because AI use is encouraged, and the answers agree on prices.
+Chatbot answers get most of the weight because AI use is encouraged, and I'd assume most, if not all applicants would use LLMs to generate their answer.
 Most put 18 to 27 troops on battlefield 6, 21 to 32 on 9, 14 to 31 on 7 and 8 when they contest them, and at most 3 on battlefields 1 and 2.
-That makes the field predictable.
-Riddler entries are capped at 5% because Riddler Nation used plain scoring, so those players are a weak model for this game.
+Riddler entries are capped at 5% because Riddler Nation used plain scoring which do not use these multipliers, so those players are a weak model for this game.
 
 Every entry except the random ones also gets a jittered copy, with 1 to 3 troops moved once or twice, and the copies carry 30% of each group's weight.
 Real applicants may tweak the answers they get, so the jitter keeps the search from relying on beating one exact number by one troop.
@@ -65,19 +59,19 @@ The center mix uses the midpoint of each range, rescaled to sum to 100%, which p
 
 Code: [`src/blotto/search.py`](src/blotto/search.py).
 
-The organizers rank on an unknown linear combination of wins and total points, so each allocation x gets a rating against a weighted field:
+Final score is ranked on an unknown linear combination of wins and total points, so each allocation x gets a rating against a weighted field:
 
 R(x) = λ · W(x) + (1 − λ) · P(x) / 127.05
 
 W is the weighted win rate and P the weighted average points per match.
 Dividing by the maximum score puts points on the same 0 to 1 scale as the win rate.
-λ is unknown, so the selection step treats it as anywhere between 0.25 and 0.75: neither pure wins nor pure points.
+λ is unknown, so the selection step treats it as anywhere between an estimate of 0.25 and 0.75.
 
 ### 5. Search for strong allocations
 
 Code: [`src/blotto/search.py`](src/blotto/search.py).
 
-There are about 4.3 trillion ways to split 100 troops across 10 battlefields, far too many to check.
+There are about 4.3 trillion ways to split 100 troops across 10 battlefields, which is far too many to check.
 Simulated annealing runs 32 chains in parallel from random starts, each for 3,000 steps that move 1 to 5 troops between two battlefields.
 It always keeps improvements and sometimes keeps a worse move while the temperature is high, so chains can escape dead ends.
 A steepest-ascent polish then tries all 270 shifts of 1 to 3 troops and takes the best, repeating until no small change helps.
@@ -88,15 +82,14 @@ For speed the searches rate against a sample of 2,000 opponents, stratified by g
 Code: [`src/blotto/counters.py`](src/blotto/counters.py).
 
 Some applicants will try to beat the obvious answers.
-The counter loop runs fictitious play: it searches for the best responses to the current pool, adds the five best that differ by at least 6 troops, and repeats for six rounds.
-The resulting 30 counters make sure the pick also faces people who out-think the chatbots.
+The counter loop runs fictitious play, where it searches for the best responses to the current pool, adds the five best that differ by at least 6 troops, and repeats for six rounds.
+The resulting 30 counters make sure the pick also faces people who try to out-think the chatbots.
 
 ### 7. Choose the pick that survives the worst case
 
 Code: [`src/blotto/robust.py`](src/blotto/robust.py).
 
-Candidates come from searches under the center mix and under every extreme mix of the ranges, for λ = 0.25, 0.5 and 0.75, plus two searches that maximize the worst case below, plus the counters.
-The 300 best distinct candidates move on.
+Candidates come from searches under the center mix and under every extreme mix of the ranges, for λ = 0.25, 0.5 and 0.75, plus two searches that maximize the worst case below, plus the counters, and the 300 best distinct candidates move on.
 
 A pessimist then chooses the group shares inside the ranges and λ inside [0.25, 0.75] to make each candidate look as bad as possible, and the pick is the candidate whose worst case is best.
 The rating is linear in the shares, so the pessimist's best move is a greedy fill: give every group its minimum, then pour the rest into the groups where the candidate does worst.
