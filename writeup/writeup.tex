@@ -70,7 +70,7 @@
 \begin{center}
   {\LARGE\bfseries Pricing the Battlefields}\\[4pt]
   {\normalsize Doyoon Kim\quad\textperiodcentered\quad Maroon Capital 2026 challenge\quad\textperiodcentered\quad dkim927@uchicago.edu}\\[6pt]
-  {\large Submission:\enspace\textbf{1, 4, 6, 1, 7, 28, 3, 5, 33, 12}}
+  {\large Submission:\enspace\textbf{1, 2, 4, 1, 16, 29, 3, 4, 33, 7}}
 \end{center}
 \vspace{2pt}
 \begin{center}
@@ -123,8 +123,8 @@ The header rows give my troops and the share of the whole simulated field that e
 
 \noindent\textbf{Summary.}
 I target battlefields 2, 3, 5, 6, 9 and 10, three adjacent pairs whose values sum to 35, so winning all six fires every multiplier and scores 80.85.
-I bid one troop more than the highest of 20 chatbot answers on 6 and 9 and give up 7 and 8, where most chatbots spend 14 to 31 troops each.
-Against a simulated field weighted toward chatbot answers, the allocation beats 85\% of opponents and finishes in the top quartile by wins and by points in all 1,000 mock tournaments.
+I outbid all 20 chatbot answers I collected on 6 and 9, match the highest of them on 5, and give up 7 and 8, where most chatbots spend 14 to 31 troops each.
+Against a simulated field weighted toward chatbot answers, the allocation beats 93\% of opponents and finishes in the top quartile by wins and by points in all 1,000 mock tournaments.
 
 \begin{figure*}[t]
 \centering
@@ -133,9 +133,9 @@ Against a simulated field weighted toward chatbot answers, the allocation beats 
   writeup,
   name=cand,
   width=7.0cm, height=3.9cm,
-  xmin=0.775, xmax=0.96, ymin=52.5, ymax=65,
-  xtick={0.80,0.85,0.90,0.95}, xticklabels={80\%,85\%,90\%,95\%},
-  ytick={54,56,...,64},
+  xmin=0.83, xmax=0.99, ymin=55, ymax=68.5,
+  xtick={0.85,0.90,0.95}, xticklabels={85\%,90\%,95\%},
+  ytick={56,58,...,68},
   xmajorgrids, ymajorgrids,
   xlabel={Win rate against the center-mix field}, ylabel={Average points per match},
   legend style={at={(0.02,0.04)},anchor=south west},
@@ -164,11 +164,11 @@ Against a simulated field weighted toward chatbot answers, the allocation beats 
   xtick={0,0.05,...,0.35}, xticklabels={0\%,5\%,10\%,15\%,20\%,25\%,30\%,35\%},
   ymajorgrids,
 ]
-  \nextgroupplot[ymax=170,ytick={0,80,160}]
+  \nextgroupplot[ymax=210,ytick={0,100,200}]
     \addplot[ybar,bar width=0.0075,fill=series1,draw=none]
       table[x expr=\thisrow{share_above}+0.005,y=wins] {\datadir/tournaments.csv};
-    \draw[ink2,line width=0.6pt] (axis cs:0.25,0) -- (axis cs:0.25,170);
-    \node[anchor=north east,font=\sffamily\footnotesize,text=ink2,align=right] at (axis cs:0.246,166) {top-quartile\\cutoff};
+    \draw[ink2,line width=0.6pt] (axis cs:0.25,0) -- (axis cs:0.25,210);
+    \node[anchor=north east,font=\sffamily\footnotesize,text=ink2,align=right] at (axis cs:0.246,205) {top-quartile\\cutoff};
     \node[anchor=north east,font=\sffamily\footnotesize,text=ink] at (rel axis cs:1,1) {By wins};
   \nextgroupplot[ymax=1050,ytick={0,400,800},xlabel={Share of the field ranked above my pick}]
     \addplot[ybar,bar width=0.0075,fill=series1,draw=none]
@@ -224,18 +224,18 @@ Win rate is my pick's, against each group with its jittered copies.}
 \toprule
 Group & Entries & Range & Center & Win rate \\
 \midrule
-Chatbot answers & 20 & 70--95\% & 73\% & 88.5\% \\
-Riddler entries & 4,510 & 0--20\% & 9\% & 70.2\% \\
-Rules of thumb & 44 & 0--15\% & 7\% & 66.6\% \\
-Random splits & 1,000 & 0--5\% & 2\% & 72.9\% \\
-Counters & 30 & 5--15\% & 9\% & 86.7\% \\
+Chatbot answers & 20 & 85--98\% & 88.4\% & 98.5\% \\
+Riddler entries & 4,510 & 0--5\% & 2.4\% & 73.2\% \\
+Rules of thumb & 44 & 0--5\% & 2.4\% & 76.6\% \\
+Random splits & 1,000 & 0--2\% & 1.0\% & 67.5\% \\
+Counters & 30 & 2--10\% & 5.8\% & 27.7\% \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 I model the field as five groups (Table~\ref{tab:field}).
 The group weights are judgment calls, so each group gets a range; the center mix uses the midpoints, and the selection step assumes the worst weights inside the ranges.
-Human play comes from 4,510 entries to FiveThirtyEight's Battle for Riddler Nation, which used the same board without the multipliers.
+Human play comes from 4,510 entries to FiveThirtyEight's Battle for Riddler Nation, which used the same board without the multipliers, so I cap its share at 5\%.
 Rules of thumb cover even splits, splits proportional to value, all-in on the top $k$ battlefields, and contiguous blocks whose base is a multiple of 5.
 Random splits draw troops from a Dirichlet-multinomial.
 Counters stand in for applicants who think a step ahead: six rounds of fictitious play, each adding the five best responses to the pool so far.
@@ -246,11 +246,12 @@ Every group except the random one carries a jittered copy of each entry, with 1 
 Each battlefield has a price list: the share of the field that a given number of troops beats.
 I buy where the list jumps and stop one troop past the jump.
 \begin{itemize}
-  \item \textbf{6 and 9.} 28 and 33 troops top every chatbot answer and beat 95\% and 96\% of the whole field.
-  \item \textbf{2 and 3.} Ten troops in total beat 90\% and 86\%, because 38 of the 40 chatbot bids on them are 3 troops or fewer.
-  \item \textbf{5 and 10.} 7 and 12 troops beat 55\% and 66\%.
-  Losing either costs its face value, never the 1.4 multiplier.
-  \item \textbf{7 and 8.} 3 and 5 troops concede the two battlefields where the chatbots overpay, yet still beat the 30\% and 25\% of opponents who abandon them.
+  \item \textbf{6 and 9.} 29 and 33 troops top every chatbot answer and beat 97\% and 98\% of the whole field.
+  \item \textbf{5.} 16 troops match the highest chatbot bid and beat 91\%.
+  \item \textbf{2 and 3.} Six troops in total beat 81\% and 77\%, because 38 of the 40 chatbot bids on them are 3 troops or fewer.
+  \item \textbf{10.} 7 troops beat 58\%.
+  Losing 10 costs its face value, never the 1.4 multiplier.
+  \item \textbf{7 and 8.} 3 and 4 troops concede the two battlefields where the chatbots overpay, yet still beat the 32\% and 20\% of opponents who abandon them.
   \item \textbf{1 and 4.} One troop each ties the many one-troop bids.
 \end{itemize}
 
@@ -263,24 +264,26 @@ I buy where the list jumps and stop one troop past the jump.
 \toprule
 Battlefields I win & Base & Score & Matches \\
 \midrule
-2, 3, 5, 6, 9, 10 & 35 & 80.85 & 17.7\% \\
-1, 2, 3, 5, 6, 9, 10 & 36 & 59.40 & 7.5\% \\
-2, 3, 6, 7, 9, 10 & 37 & 61.05 & 7.4\% \\
-2, 3, 6, 9 & 20 & 34.65 & 4.4\% \\
-2, 3, 6, 9, 10 & 30 & 64.68 & 4.3\% \\
-2, 3, 5, 6, 9 & 25 & 50.82 & 4.1\% \\
+2, 3, 5, 6, 9, 10 & 35 & 80.85 & 20.8\% \\
+2, 3, 5, 6, 7, 9, 10 & 42 & 69.30 & 8.8\% \\
+2, 3, 5, 6, 9 & 25 & 50.82 & 7.6\% \\
+1, 2, 3, 5, 6, 9, 10 & 36 & 59.40 & 5.8\% \\
+1, 2, 3, 4, 5, 6, 9 & 30 & 62.37 & 4.6\% \\
+1, 2, 5, 6, 8, 9 & 31 & 51.15 & 4.4\% \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 Table~\ref{tab:outcomes} lists my most common outcomes.
-The full target set leads at 18\% of matches.
-The next two each win one extra battlefield, 1 or 7, which breaks the multiple of 5 and costs about 20 points.
+The full target set leads at 21\% of matches.
+Winning an extra battlefield by accident costs points: adding 7 drops the score to 69.3 and adding 1 drops it to 59.4, because each breaks the multiple of 5.
 The troop on battlefield 1 still earns its place, because ties there decide matches.
 Against the ChatGPT answer 1, 1, 3, 4, 1, 1, 21, 19, 28, 21, my troop ties theirs and holds their base at 29, so I win 50.82 to 36.5.
 Without it they also take battlefield 1, their base reaches 30, their 1.4 multiplier fires, and I lose 50.82 to 52.5.
-Moving that troop to any other battlefield cuts my win rate from 84.9\% to 81.9\% or less.
-My won set has a base that is a multiple of 5 in 54\% of matches and contains 6 in 95\%, against 31\% and 51\% for the average chatbot answer.
+The same troop also works the other way: against the ChatGPT answer 0, 0, 0, 0, 15, 1, 25, 31, 1, 27, it wins battlefield 1, which pairs with my win on 4 to keep my base at 30, and I win 62.37 to 45.5; without it my base is 29 and I lose 42.9 to 45.5.
+Moving that troop to any other battlefield cuts my win rate from 93.0\% to 85.7\% or less.
+My won set has a base that is a multiple of 5 in 52\% of matches and contains 6 in 97\%, against 31\% and 46\% for the average chatbot answer.
+Head to head, the pick beats all 20 chatbot answers I collected, 10 of 10 from each model.
 
 \section{Search and robust selection}
 
@@ -293,15 +296,19 @@ The organizers rank on an unknown mix of wins and points, so $\lambda$ is unknow
 
 I search with simulated annealing over integer allocations, using 32 chains of 3,000 steps that move 1 to 5 troops at a time, then polish with steepest ascent over every shift of 1 to 3 troops until none helps.
 I run the search under the center mix and under every extreme mix of the ranges, for $\lambda \in \{0.25, 0.5, 0.75\}$, add two searches that maximize the worst case below, and keep the 300 best distinct candidates.
+For speed, each search rates against a stratified sample of 2,000 opponents, and I re-rate the candidates on the full pool of 10,208 entries.
+The counters come from the same search, run at $\lambda = 0.5$, keeping the five best results each round that differ by at least 6 troops.
 
 A pessimist then chooses the group weights $w$ inside the ranges $B$ and $\lambda \in [0.25, 0.75]$ to minimize each candidate's rating, and I submit the candidate with the best worst case:
 \begin{equation*}
   x^\star = \arg\max_x \; \min_{w \in B,\, \lambda} \; \textstyle\sum_g w_g R_{\lambda,g}(x).
 \end{equation*}
 The rating is linear in $w$, so a greedy fill gives the pessimist's exact minimum, and the worst $\lambda$ is always an endpoint.
-My pick's worst case is 0.574.
-The four runners-up sit within 0.002 of it and differ from it by at most two troops on any battlefield, so the shape is robust and the last troop or two is noise.
-Figure~\ref{fig:checks}a shows the trade-off the pessimist forces: the candidates with the most wins beat 95\% of the field but score at most 56.4 points per match, while my pick gives up 10 points of win rate to score 63.0.
+My pick's worst case is 0.598.
+Ten candidates sit within 0.005 of it, in three shapes: mine and three close variants, two that concede battlefield 6 and buy 8 and 9, and four that buy 7 and 8 instead of 6 and 9.
+All ten finish in the top quartile of every mock tournament I ran on them, so the worst case breaks the tie.
+My shape also beats more of the Riddler humans (73 to 74\%, against 60 to 65\% for the others) and scores about three more points per match than the shape that concedes 6.
+Figure~\ref{fig:checks}a shows the trade-off the pessimist forces: the candidate with the most wins beats 98.5\% of the field but scores 55.7 points per match, while my pick gives up 5.6 points of win rate to score 65.2.
 
 I considered two alternatives and rejected both.
 An equilibrium strategy mixes over many allocations, but I submit one allocation into a field that does not play the equilibrium.
@@ -310,25 +317,37 @@ Reinforcement learning would chase the same objective with more noise: the game 
 
 \section{Validation}
 
+\textbf{Reproducibility.}
+One command runs the whole pipeline in about 90 seconds with fixed random seeds, and a second script reruns the weight comparison below, so every number here reproduces exactly.
+Seventy-four tests check it, including a cross-check of all 1,024 scores against an independent exact-fraction implementation and a check that the greedy worst case matches brute force over every extreme mix.
+
 \textbf{Mock tournaments.}
 I drew 1,000 fields of 100 to 300 applicants, with group weights uniform inside the ranges, and played full round robins.
 My pick finished in the top quartile by wins and by points in all 1,000 (Figure~\ref{fig:checks}b).
-The median share of the field ranked above it is 8.4\% by wins, and in 79\% of tournaments no applicant scored more total points.
+The median share of the field ranked above it is 3.5\% by wins, and in 72\% of tournaments no applicant scored more total points.
 
 \textbf{Held-out data.}
-A rerun that never saw ChatGPT's answers or Riddler round 4 chose 2, 4, 4, 6, 2, 30, 6, 6, 31, 9, with the same shape: about 30 troops each on 6 and 9 and single digits elsewhere.
-It beats 90\% of the unseen ChatGPT answers, the same rate as on the Claude answers it trained on, though its points per match fall from 70.8 to 57.5.
-On Riddler round 4 its win rate slips from 68\% to 64\%.
+A rerun that never saw ChatGPT's answers or Riddler round 4 chose 2, 3, 3, 6, 14, 28, 3, 4, 31, 6, with the same shape: heavy on 5, 6 and 9 and light elsewhere.
+It beats 80\% of the unseen ChatGPT answers, against 100\% of the Claude answers it trained on, and its points per match fall from 76.9 to 58.6.
+On Riddler round 4 its win rate holds at 73\%, against 74\% on the rounds it saw.
 
 \textbf{Counters.}
-My exact allocation has a counter: 1, 5, 9, 4, 8, 32, 7, 12, 9, 13 beats it, and my pick wins none of 51 matches against it and 50 jittered copies of it.
+My exact allocation has a counter: 0, 4, 3, 4, 22, 0, 12, 10, 36, 9 gives up 1 and 6 and outbids me almost everywhere else, and my pick wins none of 51 matches against it and 50 jittered copies of it.
 No entry in the simulated field lies within 10 troops of that counter, so beating me this way takes an applicant who targets my numbers.
+
+\textbf{Sensitivity to the weights.}
+My first run used wider ranges: chatbots 70 to 95\%, Riddler up to 20\%, rules of thumb up to 15\%, and counters 5 to 15\%.
+It chose 1, 4, 6, 1, 7, 28, 3, 5, 33, 12, the same three pairs with more troops on 10 and fewer on 5.
+I narrowed the ranges because Riddler Nation had no multipliers, so its players are a weak model for this game.
+Under the old ranges, with the same simulated pool, the new pick still finishes in the top quartile of all 1,000 mock tournaments, with a median of 5.7\% of the field above it by wins against 10.3\% for the old pick.
+The cost is robustness to strategic players: the old pick beats 57\% of the counters, while the new pick beats 28\%.
 
 \section{Assumptions and risks}
 
 I read the rules this way: battlefields sit on a line, so 1 and 10 are not adjacent; equal totals are a win for neither player; and total points means the sum of my own scores.
-The chatbot share is my biggest judgment call.
-If the field looks more like the Riddler humans, the pick still beats 70\% of them.
-The mock tournaments draw from the pool that produced the pick, so they flatter it, and the held-out run gives the fairer estimate.
+The chatbot share is my biggest judgment call, and the pick leans on it: it beats 98.5\% of chatbot answers but only 28\% of the counters, so a field full of applicants who run their own optimization would hurt it.
+Against the Riddler humans it still wins 73\%.
+The chatbot sample is small: 20 answers from two models and one prompt, and real applicants may edit what a chatbot gives them.
+The mock tournaments draw from the pool that produced the pick, so they flatter it; the held-out run, where the win rate against unseen ChatGPT answers fell to 80\%, gives the fairer estimate.
 
 \end{document}
