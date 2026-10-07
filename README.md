@@ -5,23 +5,174 @@ Each player splits 100 troops across 10 battlefields worth 1 to 10 points.
 Bonus multipliers reward adjacent wins, base scores that are multiples of 5, and winning battlefield 6.
 The full problem statement is in [`docs/problem.md`](docs/problem.md).
 
-## Approach
+## Result
 
-1. Score every possible outcome exactly with a 1,024-entry lookup table.
-2. Build a simulated applicant pool: real Riddler submissions, rules of thumb, chatbot answers, random splits, and counters that best-respond to the rest of the pool.
-3. Search for the strongest allocations with simulated annealing and a steepest-ascent polish.
-4. Pick the candidate with the best worst case when a pessimist chooses the pool mix and the wins-versus-points weighting.
-5. Validate the pick with 1,000 mock tournaments, a held-out run, and a counter check.
-
-The design is in [`docs/specs/`](docs/specs/), and the build plan is in [`docs/plans/`](docs/plans/).
-
-## Results
-
-The current pick is `[1, 2, 4, 1, 16, 29, 3, 4, 33, 7]`.
-It is optimized against a field where chatbot answers (10 from Claude, 10 from ChatGPT) make up 85-98% of applicants.
-Riddler entries get at most 5%, because Riddler Nation used plain scoring without the multipliers.
-An earlier run with wider ranges (chatbots 70-95%, Riddler up to 20%) chose `[1, 4, 6, 1, 7, 28, 3, 5, 33, 12]`; `scripts/compare_picks.py` compares the two under both sets of ranges and writes `results/comparison.json`.
+The pick is `[1, 2, 4, 1, 16, 29, 3, 4, 33, 7]`.
+Against the simulated field it beats 93% of opponents, and it finishes in the top quartile by wins and by points in all 1,000 mock tournaments.
+It beats all 20 chatbot answers collected for the problem head to head.
 The numbers for every finalist are in [`results/summary.json`](results/summary.json).
+
+## How the pick was found
+
+### 1. Treat it as a prediction problem
+
+Colonel Blotto has no allocation that wins against everything.
+Any allocation can be beaten by one that gives up a battlefield and outbids it by a few troops elsewhere.
+So the best submission depends on what the other applicants submit, and the pipeline works in three steps: model the field, search for the allocation that does best against it, and check that the answer survives if the model is wrong.
+
+Two standard approaches were ruled out.
+A Nash equilibrium is a mixed strategy, but the challenge takes one fixed allocation into a field of people who do not play the equilibrium.
+Reinforcement learning fits sequential games; this game is a single move, and any allocation can be scored exactly against the whole field in milliseconds, so RL would be a slower, noisier optimizer of the same objective.
+
+### 2. Work out what the scoring rewards
+
+Code: [`src/blotto/scoring.py`](src/blotto/scoring.py).
+
+- Each player wins one of 2^10 = 1,024 sets of battlefields, so every score is precomputed in a lookup table.
+  The multipliers are 3/2, 7/5 and 11/10, so scores are stored as integers times 100 and ties compare exactly.
+  The maximum score is 127.05.
+- The multipliers compound.
+  A set in which every battlefield has a won neighbor, whose base is a multiple of 5, and which includes battlefield 6 scores 1.5 × 1.4 × 1.1 = 2.31 times its base.
+- Rule 2 depends only on values modulo 5.
+  Battlefields 5 and 10 never change it, and the pairs {1,4}, {2,3}, {6,9} and {7,8} cancel out.
+- Winning more can score less.
+  In 556 of the 5,120 ways to add one battlefield to a set, the score drops: {6,...,10} scores 92.4, but {1,6,...,10} scores 67.1.
+- A player can win a match while losing six battlefields: 26 sets of four outscore the other six, for example {2,6,8,9} beats its complement 51.59 to 50.4.
+
+These facts point to one target.
+The pairs {2,3}, {5,6} and {9,10} have values summing to 35, so winning all six fires every multiplier: 35 × 2.31 = 80.85, 64% of the maximum from 35 of the board's 55 points.
+Losing 5 or 10 keeps the base a multiple of 5, so the fallbacks stay strong: {2,3,6,9,10} scores 64.68 and {2,3,5,6,9} scores 50.82.
+The search found the final allocation on its own; this reading explains why it works.
+
+### 3. Model the other applicants
+
+Code: [`src/blotto/pool.py`](src/blotto/pool.py).
+
+The simulated field has five groups.
+Each group gets a range for its share of the field instead of a single number, because the shares are judgment calls.
+
+| Group | Who it represents | Source | Share of the field |
+|---|---|---|---|
+| Chatbot answers | Applicants who ask an AI | 20 answers collected by hand, 10 from Claude and 10 from ChatGPT, each from a fresh chat with the problem pasted verbatim | 85-98% |
+| Riddler entries | People playing on instinct | 4,510 submissions to FiveThirtyEight's Battle for Riddler Nation, the same board without the multipliers | 0-5% |
+| Rules of thumb | Someone who thinks for ten minutes | 44 generated allocations: even splits, value-proportional splits, all-in on the top k battlefields, blocks whose base is a multiple of 5 | 0-5% |
+| Random splits | Noise | 1,000 draws from a Dirichlet-multinomial | 0-2% |
+| Counters | Applicants who think a step ahead | 30 best responses from the counter loop below | 2-10% |
+
+Chatbot answers get most of the weight because AI use is encouraged, and the answers agree on prices.
+Most put 18 to 27 troops on battlefield 6, 21 to 32 on 9, 14 to 31 on 7 and 8 when they contest them, and at most 3 on battlefields 1 and 2.
+That makes the field predictable.
+Riddler entries are capped at 5% because Riddler Nation used plain scoring, so those players are a weak model for this game.
+
+Every entry except the random ones also gets a jittered copy, with 1 to 3 troops moved once or twice, and the copies carry 30% of each group's weight.
+Real applicants may tweak the answers they get, so the jitter keeps the search from relying on beating one exact number by one troop.
+The center mix uses the midpoint of each range, rescaled to sum to 100%, which puts chatbot answers at 88%.
+
+### 4. Rate an allocation
+
+Code: [`src/blotto/search.py`](src/blotto/search.py).
+
+The organizers rank on an unknown linear combination of wins and total points, so each allocation x gets a rating against a weighted field:
+
+R(x) = λ · W(x) + (1 − λ) · P(x) / 127.05
+
+W is the weighted win rate and P the weighted average points per match.
+Dividing by the maximum score puts points on the same 0 to 1 scale as the win rate.
+λ is unknown, so the selection step treats it as anywhere between 0.25 and 0.75: neither pure wins nor pure points.
+
+### 5. Search for strong allocations
+
+Code: [`src/blotto/search.py`](src/blotto/search.py).
+
+There are about 4.3 trillion ways to split 100 troops across 10 battlefields, far too many to check.
+Simulated annealing runs 32 chains in parallel from random starts, each for 3,000 steps that move 1 to 5 troops between two battlefields.
+It always keeps improvements and sometimes keeps a worse move while the temperature is high, so chains can escape dead ends.
+A steepest-ascent polish then tries all 270 shifts of 1 to 3 troops and takes the best, repeating until no small change helps.
+For speed the searches rate against a sample of 2,000 opponents, stratified by group, and the candidates are re-rated on the full pool of 10,208 entries.
+
+### 6. Simulate strategic applicants
+
+Code: [`src/blotto/counters.py`](src/blotto/counters.py).
+
+Some applicants will try to beat the obvious answers.
+The counter loop runs fictitious play: it searches for the best responses to the current pool, adds the five best that differ by at least 6 troops, and repeats for six rounds.
+The resulting 30 counters make sure the pick also faces people who out-think the chatbots.
+
+### 7. Choose the pick that survives the worst case
+
+Code: [`src/blotto/robust.py`](src/blotto/robust.py).
+
+Candidates come from searches under the center mix and under every extreme mix of the ranges, for λ = 0.25, 0.5 and 0.75, plus two searches that maximize the worst case below, plus the counters.
+The 300 best distinct candidates move on.
+
+A pessimist then chooses the group shares inside the ranges and λ inside [0.25, 0.75] to make each candidate look as bad as possible, and the pick is the candidate whose worst case is best.
+The rating is linear in the shares, so the pessimist's best move is a greedy fill: give every group its minimum, then pour the rest into the groups where the candidate does worst.
+The worst λ is always one of the two endpoints.
+
+The candidates within 0.005 of the best worst case, up to ten, become finalists, and each plays 1,000 mock tournaments.
+The pick has the best top-quartile rate, with the worst case breaking ties.
+This time ten finalists all made the top quartile in every tournament, and they came in three shapes: the pick and three close variants, two that concede battlefield 6 for 8 and 9, and four that buy 7 and 8 instead of 6 and 9.
+The pick's shape had the best worst case (0.598) and beat more Riddler entries than the other shapes.
+
+### 8. Validate
+
+Code: [`src/blotto/validate.py`](src/blotto/validate.py).
+
+- **Mock tournaments.**
+  1,000 fields of 100 to 300 applicants, with group shares drawn uniformly inside the ranges, each playing a full round robin.
+  The pick finished in the top quartile by wins and by points in all 1,000.
+  The median share of the field ranked above it by wins was 3.5%, and in 72% of tournaments no applicant scored more total points.
+- **Held-out data.**
+  A rerun that never saw ChatGPT's answers or Riddler round 4 chose `[2, 3, 3, 6, 14, 28, 3, 4, 31, 6]`, the same shape.
+  It beat 80% of the unseen ChatGPT answers, against 100% of the Claude answers it trained on, so expect some overfitting to the collected answers.
+- **Counter check.**
+  The best response to the pick alone, `[0, 4, 3, 4, 22, 0, 12, 10, 36, 9]`, beats it by giving up battlefields 1 and 6 and outbidding it almost everywhere else.
+  No entry in the simulated field lies within 10 troops of that counter, so beating the pick this way takes someone who targets its exact numbers.
+
+### 9. How the pick changed
+
+The first full run used wider ranges: chatbots 70-95%, Riddler up to 20%, rules of thumb up to 15%, random up to 5%, and counters 5-15%.
+It chose `[1, 4, 6, 1, 7, 28, 3, 5, 33, 12]`, the same three pairs with more troops on battlefield 10 and fewer on 5.
+Because Riddler Nation used different rules, the second run narrowed the ranges to the ones in the table above and chose the current pick.
+
+[`scripts/compare_picks.py`](scripts/compare_picks.py) compares the two picks on the same simulated pool, under both sets of ranges, and writes [`results/comparison.json`](results/comparison.json).
+Under the old ranges, the current pick still makes the top quartile in all 1,000 mock tournaments, with a median of 5.7% of the field above it by wins against 10.3% for the earlier pick.
+The cost is robustness to strategic players: the current pick beats 28% of the counters, while the earlier pick beats 57%.
+
+### Why the pick works
+
+| Battlefield | Troops | Field beaten | Reason |
+|---|---|---|---|
+| 1 | 1 | 45% | Ties the many one-troop bids, which decides matches (see below) |
+| 2 | 2 | 81% | 18 of 20 chatbot answers bid 0 or 1 here |
+| 3 | 4 | 77% | 18 of 20 chatbot answers bid 3 or fewer here |
+| 4 | 1 | 12% | Ties one-troop bids, and with battlefield 1 keeps the base a multiple of 5 |
+| 5 | 16 | 91% | Matches the highest chatbot bid; worth 0 mod 5, so losing it never costs the 1.4 |
+| 6 | 29 | 97% | Two troops above the highest chatbot bid; triggers the 1.1 |
+| 7 | 3 | 32% | Conceded: chatbots that contest it spend 14 to 25 |
+| 8 | 4 | 20% | Conceded: chatbots that contest it spend 19 to 31 |
+| 9 | 33 | 98% | One troop above the highest chatbot bid |
+| 10 | 7 | 58% | Beats the low bids; worth 0 mod 5, so losing it never costs the 1.4 |
+
+The pick's most common outcome is the full target set {2,3,5,6,9,10}, in 21% of matches.
+Its base is a multiple of 5 in 52% of matches and it wins battlefield 6 in 97%, against 31% and 46% for the average chatbot answer.
+
+The single troop on battlefield 1 shows how relative scoring works.
+Against the ChatGPT answer `[1, 1, 3, 4, 1, 1, 21, 19, 28, 21]`, it ties their troop and holds their base at 29, so the pick wins 50.82 to 36.5.
+Without it they win battlefield 1, their base reaches 30, their 1.4 multiplier fires, and the pick loses 50.82 to 52.5.
+Moving that troop anywhere else lowers the win rate from 93.0% to 85.7% or less.
+
+### Assumptions and limits
+
+- Battlefields sit on a line, so 1 and 10 are not adjacent; equal totals are a win for neither player; and total points means the sum of a player's own scores.
+- The chatbot share is the biggest judgment call.
+  The pick beats 98.5% of chatbot answers but only 28% of the counters, so a field with many applicants running their own optimization would hurt it.
+- The chatbot sample is small: 20 answers from two models and one prompt.
+- The mock tournaments draw from the same pool that produced the pick, so they are optimistic; the held-out run is the fairer estimate.
+
+The original design is in [`docs/specs/`](docs/specs/), and the build plan is in [`docs/plans/`](docs/plans/).
+
+## Figures
 
 ![Final allocation](results/allocation.png)
 
@@ -31,10 +182,7 @@ The numbers for every finalist are in [`results/summary.json`](results/summary.j
 
 ![Mock tournaments](results/tournaments.png)
 
-## Writeup
-
-The writeup is [`writeup/writeup.pdf`](writeup/writeup.pdf), built from [`writeup/writeup.tex`](writeup/writeup.tex).
-Its figures are drawn with pgfplots from the CSV files the pipeline writes to `results/figure_data/`.
+`results/figure_data/` holds the data behind the figures as CSV files.
 
 ## Usage
 
@@ -45,11 +193,9 @@ uv run ruff check
 uv run python scripts/run_pipeline.py
 uv run python scripts/run_pipeline.py --quick --out .smoke/results
 uv run python scripts/compare_picks.py
-tectonic writeup/writeup.tex
 ```
 
 The full run takes about 90 seconds, and the comparison about a minute; the `--quick` run is a smoke test with tiny settings.
-The writeup builds with [Tectonic](https://tectonic-typesetting.github.io/) (`brew install tectonic`), which fetches the LaTeX packages it needs on first use.
 
 ## Data
 
