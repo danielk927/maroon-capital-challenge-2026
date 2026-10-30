@@ -1,6 +1,6 @@
 # Maroon Capital Challenge 2026
 
-This is my write-up, hope you guys enjoy!
+Update: Ranked 2nd.
 
 ## Result
 
